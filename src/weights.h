@@ -3,6 +3,7 @@
 
 # include <iostream> 
 # include <cmath> 
+# include <random>
 # include "weights.cpp"
 double int_function(double x);
 void gauss_laguerre(double *, double *, int, double);

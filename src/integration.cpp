@@ -27,6 +27,7 @@ double int_func_spherical(double alpha, double r1, double r2,
                           double theta1, double theta2,
                           double phi1, double phi2)
 {
+
     double cos_b = cos(theta1) * cos(theta2) + sin(theta1) * sin(theta2) * cos(phi1 - phi2);
     double r12 = sqrt(r1 * r1 + r2 * r2 - 2 * r1 * r2 * cos_b);
     //cout << r12 << endl;
@@ -40,7 +41,7 @@ double int_func_spherical(double alpha, double r1, double r2,
     }
     //cout << "jeff" << endl;
     //cout << exp(-2 * alpha * (r1 + r2)) / r12 << endl;
-    return 1 / r12;
+    return sin(theta1) * sin(theta2) / r12;
 
 }
 
@@ -70,30 +71,20 @@ double gauleg_quad(double a, double b, int N, double alpha)
 
 double gauss_quad_improved(int N, double alpha)
 {
-    double *r1 = new double[N+1];
-    double *r2 = new double[N+1];
-    double *theta1 = new double[N];
-    double *theta2 = new double[N];
-    double *phi1 = new double[N];
-    double *phi2 = new double[N];
+    double *r = new double[N];
+    double *theta = new double[N];
+    double *phi = new double[N];
 
-    double *w_r1 = new double[N+1];
-    double *w_r2 = new double[N+1];
-    double *w_theta1 = new double[N];
-    double *w_theta2 = new double[N];
-    double *w_phi1 = new double[N];
-    double *w_phi2 = new double[N];
+    double *w_r = new double[N];
+    double *w_theta = new double[N];
+    double *w_phi = new double[N];
 
 
     double I = 0;
-    gauss_laguerre(r1, w_r1, N+1, alpha);
-    gauss_laguerre(r2, w_r2, N+1, alpha);
-    gauleg(0, PI, theta1, w_theta1, N);
-    gauleg(0, PI, theta2, w_theta2, N);
-    gauleg(0, 2 * PI, phi1, w_phi1, N);
-    gauleg(0, 2 * PI, phi2, w_phi2, N);
+    gauss_laguerre(r, w_r, N, alpha);
+    gauleg(0, PI, theta, w_theta, N);
+    gauleg(0, 2 * PI, phi, w_phi, N);
     for (int i = 0; i < N; i++){
-            //cout << x[i] << endl;
     for (int j = 0; j < N; j++){
     for (int k = 0; k < N; k++){
     for (int l = 0; l < N; l++){
@@ -101,35 +92,81 @@ double gauss_quad_improved(int N, double alpha)
     for (int n = 0; n < N; n++){
         //cout << I << endl;
         //cout << int_func( alpha, x[i], x[j], x[k], x[l], x[m], x[n]) << endl;
-        I += w_r1[i] * w_r2[j] * w_theta1[k] * w_theta2[l] * w_phi1[m] * w_phi2[n]
-             * int_func_spherical(alpha, r1[i], r2[j], theta1[k], theta2[l], phi1[m], phi2[n]);
+        I += w_r[i] * w_r[j] * w_theta[k] * w_theta[l] * w_phi[m] * w_phi[n]
+             * int_func_spherical(alpha, r[i], r[j], theta[k], theta[l], phi[m], phi[n]);
     }}}}}}
-    delete [] r1;
-    delete [] r2;
-    delete [] theta1;
-    delete [] theta2;
-    delete [] phi1;
-    delete [] phi2;
+    
+    
+    delete [] r;
+    cout << "hei" << endl;
+    delete [] theta;
+    cout << "hei1" << endl;
+    delete [] phi;
+    cout << "hei2" << endl;
 
-    delete [] w_r1;
-    delete [] w_r2;
-    delete [] w_theta1;
-    delete [] w_theta2;
-    delete [] w_phi1;
-    delete [] w_phi2;
+    delete [] w_r;
+    delete [] w_theta;
+    delete [] w_phi;
     return I;
 }
 
+void monte_carlo(double a, double b, double N, double lambda, double alpha, double &I, double &var)
+{   
+    double f = 0;
+    double f_2 = 0;
+    mt19937 generator (1234);
+    uniform_real_distribution<double> uniform(-lambda, lambda);
+    double x1;
+    double y1;
+    double z1;
+    double x2;
+    double y2;
+    double z2;
+    for (int i = 0; i < N; i++)
+    {
+        x1 = uniform(generator);
+        y1 = uniform(generator);
+        z1 = uniform(generator);
+        x2 = uniform(generator);
+        y2 = uniform(generator);
+        z2 = uniform(generator);
+        f += int_func_cart(alpha, x1, y1, z1, x2, y2, z2);
+        x1 = uniform(generator);
+        y1 = uniform(generator);
+        z1 = uniform(generator);
+        x2 = uniform(generator);
+        y2 = uniform(generator);
+        z2 = uniform(generator);
+        f_2 += int_func_cart(alpha, x1, y1, z1, x2, y2, z2) 
+             * int_func_cart(alpha, x1, y1, z1, x2, y2, z2); 
+    }
+    I = f * pow(b - a, 6)  / N;
+    var = f_2 / N - f * f / (N * N) ;
+}
+
 int main()
-{
+{   
+    /*
     double lambda = 1;
     double a = - lambda;
     double b = lambda;
     double alpha = 2;
     int N = 20;
-
     //double integral = gauleg_quad(a, b, N, alpha);
     double integral = gauss_quad_improved(N, alpha);
     cout << integral << " " << 5 * PI * PI / (16 * 16) << endl;
+    */
+    double lambda = 1.5;
+    double a = - lambda;
+    double b = lambda;
+    double alpha = 2;
+    int N = 1e6;
+    //double integral = gauleg_quad(a, b, N, alpha);
+    double I;
+    double var;
+    monte_carlo(a, b, N, lambda, alpha, I, var);
+    cout << I << " " << 5 * PI * PI / (16 * 16) << " " << var << endl;
+    
+
     return 0;
 }
