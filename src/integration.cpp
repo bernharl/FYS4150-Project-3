@@ -40,7 +40,7 @@ double int_func_spherical(double alpha, double r1, double r2,
     }
     //cout << "jeff" << endl;
     //cout << exp(-2 * alpha * (r1 + r2)) / r12 << endl;
-    return r1 * r1 * r2 * r2 * exp(-2 * alpha * (r1 + r2)) / r12;
+    return 1 / r12;
 
 }
 
@@ -125,7 +125,7 @@ int main()
     double lambda = 1;
     double a = - lambda;
     double b = lambda;
-    double alpha = 1.9;
+    double alpha = 2;
     int N = 20;
 
     //double integral = gauleg_quad(a, b, N, alpha);
