@@ -27,6 +27,7 @@ void gauleg(double, double, double *, double *, int);
 double gammln(double);
 
 //   Main function begins here
+/*
 int fain()
 {
      int n;
@@ -96,6 +97,7 @@ int fain()
       delete [] r;
       return 0;
 }  // end of main program
+*/
 //  this function defines the function to integrate
 double int_function(double x)
 {
