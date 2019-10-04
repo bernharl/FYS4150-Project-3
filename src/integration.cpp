@@ -1,6 +1,6 @@
 # include "weights.h"
 # define PI 3.1415926535897932384626433
-using namespace std;
+using std::cout;
 
 double int_func_cart(double alpha, double x1, double y1, double z1, double x2, double y2, double z2)
 {
@@ -95,8 +95,8 @@ double gauss_quad_improved(int N, double alpha)
         I += w_r[i] * w_r[j] * w_theta[k] * w_theta[l] * w_phi[m] * w_phi[n]
              * int_func_spherical(alpha, r[i], r[j], theta[k], theta[l], phi[m], phi[n]);
     }}}}}}
-    
-    
+
+
     delete [] r;
     cout << "hei" << endl;
     delete [] theta;
@@ -110,8 +110,10 @@ double gauss_quad_improved(int N, double alpha)
     return I;
 }
 
-void monte_carlo(double a, double b, double N, double lambda, double alpha, double &I, double &var)
-{   
+std::pair<double, double> monte_carlo(double a, double b, double N, double lambda, double alpha)
+{
+    double I;
+    double var;
     double f = 0;
     double f_2 = 0;
     mt19937 generator (1234);
@@ -137,15 +139,19 @@ void monte_carlo(double a, double b, double N, double lambda, double alpha, doub
         x2 = uniform(generator);
         y2 = uniform(generator);
         z2 = uniform(generator);
-        f_2 += int_func_cart(alpha, x1, y1, z1, x2, y2, z2) 
-             * int_func_cart(alpha, x1, y1, z1, x2, y2, z2); 
+        f_2 += int_func_cart(alpha, x1, y1, z1, x2, y2, z2)
+             * int_func_cart(alpha, x1, y1, z1, x2, y2, z2);
     }
     I = f * pow(b - a, 6)  / N;
-    var = f_2 / N - f * f / (N * N) ;
+    var = f_2 / N - f * f / (N * N);
+    std::pair<double, double> results = make_pair(I, var);
+    //results[0] = 12; // Calculated integral
+    //results[1] = 13;  // Confidence interval
+    return results;
 }
 
 int main()
-{   
+{
     /*
     double lambda = 1;
     double a = - lambda;
@@ -162,11 +168,11 @@ int main()
     double alpha = 2;
     int N = 1e6;
     //double integral = gauleg_quad(a, b, N, alpha);
-    double I;
-    double var;
-    monte_carlo(a, b, N, lambda, alpha, I, var);
-    cout << I << " " << 5 * PI * PI / (16 * 16) << " " << var << endl;
-    
+    std::pair<double, double> results_MC = monte_carlo(a, b, N, lambda, alpha);
+    double integral_MC = results_MC.first;
+    double confidence_MC = results_MC.second;
+    cout << integral_MC << " " << 5 * PI * PI / (16 * 16) << " " << confidence_MC << endl;
+
 
     return 0;
 }
