@@ -4,6 +4,7 @@
 # include <iostream> 
 # include <cmath> 
 # include <random>
+# include <ctime>
 # include "weights.cpp"
 double int_function(double x);
 void gauss_laguerre(double *, double *, int, double);
