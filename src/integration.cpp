@@ -33,19 +33,10 @@ double int_func_spherical(double u1, double u2,
 {
     double cos_b = cos(theta1) * cos(theta2) + sin(theta1) * sin(theta2) * cos(phi1 - phi2);
     double r12 = u1 * u1 + u2 * u2 - 2 * u1 * u2 * cos_b;
-    //cout << r12 << endl;
-    //cout << r12 << endl;
-    //exit(0);
-    //cout << exp(-2 * alpha * (r1 + r2)) / r12 << endl;
-    //exit(0);
     if (r12 <= ZERO)
     {
-      //cout << "jeff" << endl;
-      //cout << r12 << endl;
       return 0;
     }
-    //cout << "jeff" << endl;
-    //cout << exp(-2 * alpha * (r1 + r2)) / r12 << endl;
     return 1.0 / sqrt(r12);
 
 }
@@ -180,7 +171,7 @@ std::pair<double, double> monte_carlo_improved(double N, double alpha)
       theta2 = uniform_theta(generator);
       phi1 = uniform_phi(generator);
       phi2 = uniform_phi(generator);
-      f += int_func_spherical(u1, u1, theta1, theta2, phi1, phi2) / (32 * pow(alpha, 5));
+      f += exp(-2 * alpha * (u1 + u2)) * int_func_spherical(u1, u2, theta1, theta2, phi1, phi2)  * u1 * u1 * u2 * u2 / (32 * pow(alpha, 5));
 
       u1 = exponential(generator);
       u2 = exponential(generator);
@@ -188,7 +179,7 @@ std::pair<double, double> monte_carlo_improved(double N, double alpha)
       theta2 = uniform_theta(generator);
       phi1 = uniform_phi(generator);
       phi2 = uniform_phi(generator);
-      f_2 += pow(int_func_spherical(u1, u1, theta1, theta2, phi1, phi2) / (32 * pow(alpha, 5)), 2);
+      f_2 += pow(int_func_spherical(u1, u2, theta1, theta2, phi1, phi2) * u1 * u1 * u2 * u2 / (32 * pow(alpha, 5)), 2);
 
   }
 
@@ -201,7 +192,7 @@ std::pair<double, double> monte_carlo_improved(double N, double alpha)
 
 int main()
 {
-
+    double analytical =  5 * PI * PI / (16 * 16);
     //double lambda = 1;
     //double a = - lambda;
     //double b = lambda;
@@ -211,7 +202,7 @@ int main()
     std::pair<double, double> results_MC_improved = monte_carlo_improved(N, alpha);
     double integral_MC_improved = results_MC_improved.first;
     double confidence_MC_improved = results_MC_improved.second;
-    cout << integral_MC_improved << " " << 5 * PI * PI / (16 * 16) << " " << confidence_MC_improved <<  endl;
+    cout << integral_MC_improved << " " << analytical << " " << confidence_MC_improved << " " <<  analytical / integral_MC_improved << endl;
 
 
     double lambda = 1.5;
