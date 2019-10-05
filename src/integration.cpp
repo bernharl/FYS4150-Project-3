@@ -146,8 +146,7 @@ std::pair<double, double> monte_carlo(double a, double b, double N, double lambd
         x2 = uniform(generator);
         y2 = uniform(generator);
         z2 = uniform(generator);
-        f_2 += int_func_cart(alpha, x1, y1, z1, x2, y2, z2)
-             * int_func_cart(alpha, x1, y1, z1, x2, y2, z2);
+        f_2 += pow(int_func_cart(alpha, x1, y1, z1, x2, y2, z2), 2);
     }
     I = f * pow(b - a, 6)  / N;
     var = f_2 / N - f * f / (N * N);
@@ -157,6 +156,49 @@ std::pair<double, double> monte_carlo(double a, double b, double N, double lambd
     return results;
 }
 
+std::pair<double, double> monte_carlo_improved(double N, double alpha)
+{
+  double I;
+  double var;
+  double f = 0;
+  double f_2 = 0;
+  mt19937 generator (1234);
+  exponential_distribution<double> exponential(alpha);
+  uniform_real_distribution<double> uniform_theta(0, PI);
+  uniform_real_distribution<double> uniform_phi(0, 2 * PI);
+  double u1;
+  double u2;
+  double theta1;
+  double theta2;
+  double phi1;
+  double phi2;
+  for (int i = 0; i < N; i++)
+  {
+      u1 = exponential(generator);
+      u2 = exponential(generator);
+      theta1 = uniform_theta(generator);
+      theta2 = uniform_theta(generator);
+      phi1 = uniform_phi(generator);
+      phi2 = uniform_phi(generator);
+      f += int_func_spherical(u1, u1, theta1, theta2, phi1, phi2) / (32 * pow(alpha, 5));
+
+      u1 = exponential(generator);
+      u2 = exponential(generator);
+      theta1 = uniform_theta(generator);
+      theta2 = uniform_theta(generator);
+      phi1 = uniform_phi(generator);
+      phi2 = uniform_phi(generator);
+      f_2 += pow(int_func_spherical(u1, u1, theta1, theta2, phi1, phi2) / (32 * pow(alpha, 5)), 2);
+
+  }
+
+  var = f_2 / N - f * f / (N * N);
+  I = f / N;
+  cout << I << endl;
+  std::pair<double, double> results = make_pair(I, var);
+  return results;
+}
+
 int main()
 {
 
@@ -164,23 +206,25 @@ int main()
     //double a = - lambda;
     //double b = lambda;
     double alpha = 2;
-    int N = 20;
+    int N = 1e6;
     //double integral = gauleg_quad(a, b, N, alpha);
-    double integral = gauss_quad_improved(N, alpha);
-    cout << integral << " " << 5 * PI * PI / (16 * 16) << " " << integral / (5 * PI * PI / (16 * 16)) <<  endl;
+    std::pair<double, double> results_MC_improved = monte_carlo_improved(N, alpha);
+    double integral_MC_improved = results_MC_improved.first;
+    double confidence_MC_improved = results_MC_improved.second;
+    cout << integral_MC_improved << " " << 5 * PI * PI / (16 * 16) << " " << confidence_MC_improved <<  endl;
 
-    /*
+
     double lambda = 1.5;
     double a = - lambda;
     double b = lambda;
-    double alpha = 2;
-    int N = 1e6;
+    //double alpha = 2;
+    //int N = 1e6;
     //double integral = gauleg_quad(a, b, N, alpha);
     std::pair<double, double> results_MC = monte_carlo(a, b, N, lambda, alpha);
     double integral_MC = results_MC.first;
     double confidence_MC = results_MC.second;
     cout << integral_MC << " " << 5 * PI * PI / (16 * 16) << " " << confidence_MC << endl;
-    */
+
 
 
     return 0;
