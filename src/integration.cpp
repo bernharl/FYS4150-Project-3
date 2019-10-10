@@ -150,11 +150,12 @@ std::pair<double, double> monte_carlo(double a, double b, double N, double lambd
 std::pair<double, double> monte_carlo_improved(double N, double alpha)
 {
   double I;
+  double func_val;
   double var;
   double f = 0;
   double f_2 = 0;
   mt19937 generator (1234);
-  exponential_distribution<double> exponential(alpha);
+  exponential_distribution<double> exponential(1);
   uniform_real_distribution<double> uniform_theta(0, PI);
   uniform_real_distribution<double> uniform_phi(0, 2 * PI);
   double u1;
@@ -171,21 +172,22 @@ std::pair<double, double> monte_carlo_improved(double N, double alpha)
       theta2 = uniform_theta(generator);
       phi1 = uniform_phi(generator);
       phi2 = uniform_phi(generator);
-      f += exp(-2 * alpha * (u1 + u2)) * int_func_spherical(u1, u2, theta1, theta2, phi1, phi2)  * u1 * u1 * u2 * u2 / (32 * pow(alpha, 5));
+      func_val = int_func_spherical(u1, u2, theta1, theta2, phi1, phi2)  * u1 * u1 * u2 * u2 * sin(theta1) * sin(theta2);
+      f += func_val;
 
-      u1 = exponential(generator);
+      /*u1 = exponential(generator);
       u2 = exponential(generator);
       theta1 = uniform_theta(generator);
       theta2 = uniform_theta(generator);
       phi1 = uniform_phi(generator);
-      phi2 = uniform_phi(generator);
-      f_2 += pow(int_func_spherical(u1, u2, theta1, theta2, phi1, phi2) * u1 * u1 * u2 * u2 / (32 * pow(alpha, 5)), 2);
-
+      phi2 = uniform_phi(generator);*/
+      f_2 += func_val * func_val;
   }
 
-  var = f_2 / N - f * f / (N * N);
-  I = f / N;
-  cout << I << endl;
+
+  I = 4 * pow (PI, 4) * f / (N * (32 * pow(alpha, 5)));
+  f_2 *= pow(4 * pow (PI, 4) / (N * (32 * pow(alpha, 5))), 2);
+  var = f_2 / N - I * I / (N * N);
   std::pair<double, double> results = make_pair(I, var);
   return results;
 }
@@ -202,7 +204,7 @@ int main()
     std::pair<double, double> results_MC_improved = monte_carlo_improved(N, alpha);
     double integral_MC_improved = results_MC_improved.first;
     double confidence_MC_improved = results_MC_improved.second;
-    cout << integral_MC_improved << " " << analytical << " " << confidence_MC_improved << " " <<  analytical / integral_MC_improved << endl;
+    cout << integral_MC_improved << " " << analytical << " " << confidence_MC_improved << endl;
 
 
     double lambda = 1.5;
