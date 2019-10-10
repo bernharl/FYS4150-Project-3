@@ -112,9 +112,10 @@ std::pair<double, double> monte_carlo(double a, double b, double N, double lambd
 {
     double I;
     double var;
+    double func_val;
     double f = 0;
     double f_2 = 0;
-    mt19937 generator (1234);
+    mt19937 generator (12345);
     uniform_real_distribution<double> uniform(-lambda, lambda);
     double x1;
     double y1;
@@ -130,17 +131,21 @@ std::pair<double, double> monte_carlo(double a, double b, double N, double lambd
         x2 = uniform(generator);
         y2 = uniform(generator);
         z2 = uniform(generator);
-        f += int_func_cart(alpha, x1, y1, z1, x2, y2, z2);
+        func_val = int_func_cart(alpha, x1, y1, z1, x2, y2, z2);
+        f += func_val;
+        /*
         x1 = uniform(generator);
         y1 = uniform(generator);
         z1 = uniform(generator);
         x2 = uniform(generator);
         y2 = uniform(generator);
-        z2 = uniform(generator);
-        f_2 += pow(int_func_cart(alpha, x1, y1, z1, x2, y2, z2), 2);
+        z2 = uniform(generator);*/
+        f_2 += func_val * func_val;
     }
-    I = f * pow(b - a, 6)  / N;
-    var = f_2 / N - f * f / (N * N);
+    double common_factor = pow(b - a, 6);
+    I = f * common_factor  / N;
+    f_2 *= pow(common_factor, 2) / (N);
+    var = (f_2 - I * I) / N;
     std::pair<double, double> results = make_pair(I, var);
     //results[0] = 12; // Calculated integral
     //results[1] = 13;  // Confidence interval
@@ -154,7 +159,7 @@ std::pair<double, double> monte_carlo_improved(double N, double alpha)
   double var;
   double f = 0;
   double f_2 = 0;
-  mt19937 generator (1234);
+  mt19937 generator (12345);
   exponential_distribution<double> exponential(1);
   uniform_real_distribution<double> uniform_theta(0, PI);
   uniform_real_distribution<double> uniform_phi(0, 2 * PI);
@@ -184,10 +189,12 @@ std::pair<double, double> monte_carlo_improved(double N, double alpha)
       f_2 += func_val * func_val;
   }
 
+  double common_factor = 4 * pow(PI, 4) / pow(2 * alpha, 5);
+  I = f * common_factor / N;
 
-  I = 4 * pow (PI, 4) * f / (N * (32 * pow(alpha, 5)));
-  f_2 *= pow(4 * pow (PI, 4) / (N * (32 * pow(alpha, 5))), 2);
-  var = f_2 / N - I * I / (N * N);
+  f_2 *= common_factor * common_factor / (N);
+  var = (f_2 - I * I) / N;
+
   std::pair<double, double> results = make_pair(I, var);
   return results;
 }
@@ -199,7 +206,7 @@ int main()
     //double a = - lambda;
     //double b = lambda;
     double alpha = 2;
-    int N = 1e6;
+    int N = 1e5;
     //double integral = gauleg_quad(a, b, N, alpha);
     std::pair<double, double> results_MC_improved = monte_carlo_improved(N, alpha);
     double integral_MC_improved = results_MC_improved.first;
@@ -216,7 +223,7 @@ int main()
     std::pair<double, double> results_MC = monte_carlo(a, b, N, lambda, alpha);
     double integral_MC = results_MC.first;
     double confidence_MC = results_MC.second;
-    cout << integral_MC << " " << 5 * PI * PI / (16 * 16) << " " << confidence_MC << endl;
+    cout << integral_MC << " " << analytical << " " << confidence_MC << endl;
 
 
 
