@@ -1,5 +1,6 @@
 # include <omp.h>
 # include "weights.h"
+# include <stdexcept>
 # define PI 3.1415926535897932384626433
 using std::cout;
 using std::cos;
@@ -14,17 +15,10 @@ double int_func_cart(double alpha, double x1, double y1, double z1, double x2, d
     double r12 = sqrt((x1 - x2) * (x1 - x2) +
                       (y1 - y2) * (y1 - y2) +
                       (z1 - z2) * (z1 - z2));
-    //cout << r12 << endl;
-    //exit(0);
-    //cout << exp(-2 * alpha * (r1 + r2)) / r12 << endl;
-    //exit(0);
     if (r12 <= ZERO)
     {
-      //cout << "jeff" << endl;
       return 0;
     }
-    //cout << "jeff" << endl;
-    //cout << exp(-2 * alpha * (r1 + r2)) / r12 << endl;
     return exp(-2 * alpha * (r1 + r2)) / r12;
 
 }
@@ -50,14 +44,11 @@ double gauleg_quad(double a, double b, int N, double alpha)
     double I = 0;
     gauleg(a, b, x, w, N);
     for (int i = 0; i < N; i++){
-            //cout << x[i] << endl;
     for (int j = 0; j < N; j++){
     for (int k = 0; k < N; k++){
     for (int l = 0; l < N; l++){
     for (int m = 0; m < N; m++){
     for (int n = 0; n < N; n++){
-        //cout << I << endl;
-        //cout << int_func( alpha, x[i], x[j], x[k], x[l], x[m], x[n]) << endl;
         I += w[i] * w[j] * w[k] * w[l] * w[m] * w[n]
              * int_func_cart( alpha, x[i], x[j], x[k], x[l], x[m], x[n]);
     }}}}}}
@@ -81,10 +72,6 @@ double gauss_quad_improved(int N, double alpha)
     gauleg(0, PI, theta, w_theta, N);
     gauleg(0, 2 * PI, phi, w_phi, N);
     for (int i = 1; i <= N; i++){
-      cout << i <<": w_u= " << w_u[i] << ", u= " << u[i] << endl;
-      cout << i <<": w_theta= " << w_theta[i-1] << ", theta= " << theta[i-1] << endl;
-      cout << i <<": w_phi= " << w_phi[i-1] << ", phi= " << phi[i-1] << endl;
-      cout << i << " INTEGRAND XD JEFF! " << int_func_spherical(u[i], u[i], theta[i], theta[i], phi[i], phi[i]) << endl;
     for (int j = 1; j <= N; j++){
     for (int k = 0; k < N; k++){
     for (int l = 0; l < N; l++){
@@ -92,9 +79,6 @@ double gauss_quad_improved(int N, double alpha)
     for (int n = 0; n < N; n++){
         I += w_u[i] * w_u[j] * w_theta[k] * w_theta[l] * w_phi[m] * w_phi[n]
              * int_func_spherical(u[i], u[j], theta[k], theta[l], phi[m], phi[n]) * sin(theta[k]) * sin(theta[l]);
-
-
-        //cout << int_func_spherical(alpha, u[i], u[j], theta[k], theta[l], phi[m], phi[n]) << endl;
     }}}}}}
 
 
@@ -109,7 +93,7 @@ double gauss_quad_improved(int N, double alpha)
     return I / (32 * pow(alpha, 5));
 }
 
-std::pair<double, double> monte_carlo(double a, double b, int N, double lambda, double alpha)
+std::pair<double, double> monte_carlo(double a, double b, int N, double lambda, double alpha, int number_of_threads)
 {
     double I;
     double var;
@@ -124,6 +108,7 @@ std::pair<double, double> monte_carlo(double a, double b, int N, double lambda, 
     double x2;
     double y2;
     double z2;
+    #pragma omp parallel for reduction (+:f, f_2) num_threads(number_of_threads) private(x1, x2, y1, y2, z1, z2, func_val)
     for (int i = 0; i < N; i++)
     {
         x1 = uniform(generator);
@@ -134,13 +119,6 @@ std::pair<double, double> monte_carlo(double a, double b, int N, double lambda, 
         z2 = uniform(generator);
         func_val = int_func_cart(alpha, x1, y1, z1, x2, y2, z2);
         f += func_val;
-        /*
-        x1 = uniform(generator);
-        y1 = uniform(generator);
-        z1 = uniform(generator);
-        x2 = uniform(generator);
-        y2 = uniform(generator);
-        z2 = uniform(generator);*/
         f_2 += func_val * func_val;
     }
     double common_factor = pow(b - a, 6);
@@ -148,12 +126,10 @@ std::pair<double, double> monte_carlo(double a, double b, int N, double lambda, 
     f_2 *= pow(common_factor, 2) / (N);
     var = (f_2 - I * I) / N;
     std::pair<double, double> results = make_pair(I, var);
-    //results[0] = 12; // Calculated integral
-    //results[1] = 13;  // Confidence interval
     return results;
 }
 
-std::pair<double, double> monte_carlo_improved(int N, double alpha)
+std::pair<double, double> monte_carlo_improved(int N, double alpha, int number_of_threads)
 {
   double I;
   double func_val;
@@ -170,7 +146,7 @@ std::pair<double, double> monte_carlo_improved(int N, double alpha)
   double theta2;
   double phi1;
   double phi2;
-  #pragma omp parallel for reduction (+:f, f_2) num_threads (omp_get_max_threads()) private(u1, u2, theta1, theta2, phi1, phi2, func_val)
+  #pragma omp parallel for reduction (+:f, f_2) num_threads(number_of_threads) private(u1, u2, theta1, theta2, phi1, phi2, func_val)
   for (int i = 0; i < N; i++)
   {
       u1 = exponential(generator);
@@ -181,13 +157,6 @@ std::pair<double, double> monte_carlo_improved(int N, double alpha)
       phi2 = uniform_phi(generator);
       func_val = int_func_spherical(u1, u2, theta1, theta2, phi1, phi2)  * u1 * u1 * u2 * u2 * sin(theta1) * sin(theta2);
       f += func_val;
-
-      /*u1 = exponential(generator);
-      u2 = exponential(generator);
-      theta1 = uniform_theta(generator);
-      theta2 = uniform_theta(generator);
-      phi1 = uniform_phi(generator);
-      phi2 = uniform_phi(generator);*/
       f_2 += func_val * func_val;
   }
 
@@ -201,32 +170,52 @@ std::pair<double, double> monte_carlo_improved(int N, double alpha)
   return results;
 }
 
-int main()
+int main(int argc, char *argv[])
 {
+    int number_of_threads;
+
+    if (argc != 2){
+      throw std::invalid_argument("Please provide exactly one command line argument deciding the number of threads, use -1 to use all available");
+    }
+    else {
+      number_of_threads = atoi(argv[1]);
+    }
+
+    if (number_of_threads == -1){
+      number_of_threads = omp_get_max_threads();
+    }
+    else if (number_of_threads > omp_get_max_threads()){
+      throw std::invalid_argument("Number of threads chosen is higher than the max available!");
+    }
+    else if (number_of_threads <= 0){
+      throw std::invalid_argument("Please choose a positive, non-zero amount of threads. To use all threads, choose -1");
+    }
     double analytical =  5 * PI * PI / (16 * 16);
-    //double lambda = 1;
-    //double a = - lambda;
-    //double b = lambda;
     double alpha = 2;
     int N = 1e7;
-    //double integral = gauleg_quad(a, b, N, alpha);
-    std::pair<double, double> results_MC_improved = monte_carlo_improved(N, alpha);
+
+    double t_start = omp_get_wtime();
+    std::pair<double, double> results_MC_improved = monte_carlo_improved(N, alpha, number_of_threads);
+    double t_end = omp_get_wtime();
+    double CPU_time = 1000.0 * (t_end - t_start);
+
     double integral_MC_improved = results_MC_improved.first;
     double confidence_MC_improved = results_MC_improved.second;
-    cout << integral_MC_improved << " " << analytical << " " << confidence_MC_improved << endl;
+    cout << "Improved MC: Time: "<< CPU_time << " ms | Numerical integral: " << integral_MC_improved << "| Analytical: " << analytical << "| Variance: " << confidence_MC_improved << endl;
 
 
     double lambda = 1.5;
     double a = - lambda;
     double b = lambda;
-    //double alpha = 2;
-    //int N = 1e6;
-    //double integral = gauleg_quad(a, b, N, alpha);
-    std::pair<double, double> results_MC = monte_carlo(a, b, N, lambda, alpha);
+
+    t_start = omp_get_wtime();
+    std::pair<double, double> results_MC = monte_carlo(a, b, N, lambda, alpha, number_of_threads);
+    t_end = omp_get_wtime();
+    CPU_time = 1000.0 * (t_end - t_start);
+
     double integral_MC = results_MC.first;
     double confidence_MC = results_MC.second;
-    cout << integral_MC << " " << analytical << " " << confidence_MC << endl;
-
+    cout << "Brute MC: Time: "<< CPU_time << " ms | Numerical integral: " << integral_MC << "| Analytical: " << analytical << "| Variance: " << confidence_MC << endl;
 
 
     return 0;
