@@ -112,10 +112,10 @@ std::pair<double, double> monte_carlo(double a, double b, int N, double lambda, 
     for (int i = 0; i < N; i++)
     {
         x1 = uniform(generator);
-        y1 = uniform(generator);
-        z1 = uniform(generator);
         x2 = uniform(generator);
+        y1 = uniform(generator);
         y2 = uniform(generator);
+        z1 = uniform(generator);
         z2 = uniform(generator);
         func_val = int_func_cart(alpha, x1, y1, z1, x2, y2, z2);
         f += func_val;
