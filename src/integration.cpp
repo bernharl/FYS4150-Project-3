@@ -1,3 +1,4 @@
+# include <omp.h>
 # include "weights.h"
 # define PI 3.1415926535897932384626433
 using std::cout;
@@ -108,7 +109,7 @@ double gauss_quad_improved(int N, double alpha)
     return I / (32 * pow(alpha, 5));
 }
 
-std::pair<double, double> monte_carlo(double a, double b, double N, double lambda, double alpha)
+std::pair<double, double> monte_carlo(double a, double b, int N, double lambda, double alpha)
 {
     double I;
     double var;
@@ -152,7 +153,7 @@ std::pair<double, double> monte_carlo(double a, double b, double N, double lambd
     return results;
 }
 
-std::pair<double, double> monte_carlo_improved(double N, double alpha)
+std::pair<double, double> monte_carlo_improved(int N, double alpha)
 {
   double I;
   double func_val;
@@ -169,6 +170,7 @@ std::pair<double, double> monte_carlo_improved(double N, double alpha)
   double theta2;
   double phi1;
   double phi2;
+  #pragma omp parallel for reduction (+:f, f_2) num_threads (omp_get_max_threads()) private(u1, u2, theta1, theta2, phi1, phi2, func_val)
   for (int i = 0; i < N; i++)
   {
       u1 = exponential(generator);
@@ -206,7 +208,7 @@ int main()
     //double a = - lambda;
     //double b = lambda;
     double alpha = 2;
-    int N = 1e5;
+    int N = 1e7;
     //double integral = gauleg_quad(a, b, N, alpha);
     std::pair<double, double> results_MC_improved = monte_carlo_improved(N, alpha);
     double integral_MC_improved = results_MC_improved.first;
