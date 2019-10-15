@@ -1,3 +1,13 @@
+# include <omp.h>
+# include "weights.h"
+# include <stdexcept>
+# define PI 3.1415926535897932384626433
+using std::cout;
+using std::cos;
+using std::sin;
+using std::sqrt;
+using std::exp;
+
 #include "integration.cpp"
 
 
@@ -24,7 +34,7 @@ int main(int argc, char *argv[])
     double analytical =  5 * PI * PI / (16 * 16);
     double alpha = 2;
     int N = 1e7;
-
+    /*
     double t_start = omp_get_wtime();
     std::pair<double, double> results_MC_improved = monte_carlo_improved(N, alpha, number_of_threads);
     double t_end = omp_get_wtime();
@@ -47,7 +57,20 @@ int main(int argc, char *argv[])
     double integral_MC = results_MC.first;
     double confidence_MC = results_MC.second;
     cout << "Brute MC: Time: "<< CPU_time << " ms | Numerical integral: " << integral_MC << "| Analytical: " << analytical << "| Variance: " << confidence_MC << endl;
+    */
 
 
+    arma::mat gauleg_res = arma::zeros <arma::mat> (51, 51);
+
+    
+    for (double i=1; i<=5; i+=0.1){  
+    gauleg_res((int)(10 * i), 0) = i;
+    for (double j=1; j<=5; j+=0.1){
+        gauleg_res(0, (int) (10 * j));
+        N = std::round(std::pow(10,i));
+        gauleg_res(i,j) = gauleg_quad(-j, j, N, 2.0);
+    
+    }}
+    cout << gauleg_res << endl;
     return 0;
 }

@@ -1,10 +1,12 @@
 #ifndef MAIN_H
 #define MAIN_H
 
+# include <armadillo>
 # include <iostream> 
 # include <cmath> 
 # include <random>
 # include "weights.cpp"
+
 double int_function(double x);
 void gauss_laguerre(double *, double *, int, double);
 double trapezoidal_rule ( double, double, int, double (*func)(double) );
