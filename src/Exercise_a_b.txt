@@ -1,0 +1,2 @@
+ N:  Error gualeg_quad:  Error gauss_quad_improved: 
+                   1         0.192765711         0.192765711
