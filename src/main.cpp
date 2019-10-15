@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
     else if (number_of_threads <= 0){
       throw std::invalid_argument("Please choose a positive, non-zero amount of threads. To use all threads, choose -1");
     }
-    double analytical =  5 * PI * PI / (16 * 16);
+    double analy =  5 * PI * PI / (16 * 16);
     double alpha = 2;
     int N = 1e7;
     /*
@@ -83,9 +83,9 @@ int main(int argc, char *argv[])
   double lambda = 1.5;
   double error_gauleg;
   double error_gauss_improved;
-  cout << gauss_quad_improved( 2, 2.0) << endl;
+  cout << gauss_quad_improved( 5, 2.0) << "  " << analy << endl;
   
-  ofstream outfile;
+  /* ofstream outfile;
   outfile.open("Exercise_a_b.txt");
   outfile << " N: " << " Error gualeg_quad: " << " Error gauss_quad_improved: " << endl;
   for (int i = 1; i <= 30; i++)
@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
             
   }
   outfile.close();
-  
+  */
   /*
   // Exercise b) output
   ofstream outfile;
