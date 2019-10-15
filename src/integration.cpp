@@ -125,7 +125,7 @@ double gauss_quad_improved(int N, double alpha)
     for (int n = 0; n < N; n++){
         I += w_u[i] * w_u[j] * w_theta[k] * w_theta[l] * w_phi[m] * w_phi[n]
              * int_func_spherical(u[i], u[j], theta[k], theta[l], phi[m], phi[n]) * sin(theta[k]) * sin(theta[l]);
-    }}}}}}
+    }}}}}} 
 
     delete [] u;
     delete [] theta;
@@ -160,7 +160,7 @@ std::pair<double, double> monte_carlo(double a, double b, int N, double lambda, 
     double func_val;
     double f = 0;
     double f_2 = 0;
-    mt19937 generator (12345);
+    mt19937 generator (omp_get_wtime());
     uniform_real_distribution<double> uniform(-lambda, lambda);
     double x1;
     double y1;
@@ -209,7 +209,7 @@ std::pair<double, double> monte_carlo_improved(int N, double alpha, int number_o
   double var;
   double f = 0;
   double f_2 = 0;
-  mt19937 generator (12345);
+  mt19937 generator (omp_get_wtime());
   exponential_distribution<double> exponential(1);
   uniform_real_distribution<double> uniform_theta(0, PI);
   uniform_real_distribution<double> uniform_phi(0, 2 * PI);

@@ -83,11 +83,13 @@ int main(int argc, char *argv[])
   double lambda = 1.5;
   double error_gauleg;
   double error_gauss_improved;
+  /*
+  cout << gauss_quad_improved(30, 2.0) << "  " << analy << endl;
   
   ofstream outfile;
   outfile.open("Exercise_a_b.txt");
   outfile << " N: " << " Error gualeg_quad: " << " Error gauss_quad_improved: " << endl;
-  for (int i = 1; i <= 30; i++)
+  for (int i = 1; i <= 6; i++)
   { 
     error_gauleg = std::fabs(gauleg_quad( -lambda, lambda, i, 2.0) - analy);
     error_gauss_improved = std::fabs(gauss_quad_improved( i, 2.0) - analy);
@@ -98,6 +100,76 @@ int main(int argc, char *argv[])
   cout << i << endl;
   }
   outfile.close();
+  */
+
+  lambda = 1.5;
+  double a = - lambda;
+  double b = lambda;
+
+  double t_start;
+  std::pair<double, double> results_MC;
+  double t_end;
+  double CPU_time;
+
+  double integral_MC = results_MC.first;
+  double confidence_MC = results_MC.second;
+  /*
+  ofstream outfile;
+  outfile.open("montecarlo.txt");
+  outfile << " N: " << " Integral: " << " Variance: " << "CPU_time" << endl;
+  for (int i=1; i<=8; i++)
+  {
+    N = std::pow(10, i);
+    t_start = omp_get_wtime();
+    std::pair<double, double> results_MC = monte_carlo(a, b, N, lambda, alpha, 1);
+    t_end = omp_get_wtime();
+    CPU_time = 1000.0 * (t_end - t_start);
+
+    outfile << setw(20) << setprecision(10) << N 
+            << setw(20) << setprecision(10) << results_MC.first
+            << setw(20) << setprecision(10) << results_MC.second 
+            << setw(20) << setprecision(10) << CPU_time
+            << endl;
+  }
+  outfile.close();
+
+  ofstream outfileimp;
+  outfileimp.open("montecarlo_improved.txt");
+  outfileimp << " N: " << " Integral: " << " Variance: " << "CPU_time" << endl;
+  for (int i=1; i<=8; i++)
+  {
+    N = std::pow(10, i);
+    t_start = omp_get_wtime();
+    std::pair<double, double> results_MC = monte_carlo_improved(N, alpha, 1);
+    t_end = omp_get_wtime();
+    CPU_time = 1000.0 * (t_end - t_start);
+
+    outfileimp << setw(20) << setprecision(10) << N 
+               << setw(20) << setprecision(10) << results_MC.first
+               << setw(20) << setprecision(10) << results_MC.second 
+               << setw(20) << setprecision(10) << CPU_time
+               << endl;
+  }
+  outfileimp.close();
+  */
+  ofstream outfilepar;
+  outfilepar.open("montecarlo_paro3.txt");
+  outfilepar << " N: " << " Integral: " << " Variance: " << "CPU_time" << endl;
+  for (int i=1; i<=8; i++)
+  {
+    N = std::pow(10, i);
+    t_start = omp_get_wtime();
+    cout << "hei" << endl;
+    std::pair<double, double> results_MC = monte_carlo_improved(N, alpha, number_of_threads);
+    t_end = omp_get_wtime();
+    CPU_time = 1000.0 * (t_end - t_start);
+    outfilepar << setw(20) << setprecision(10) << N 
+               << setw(20) << setprecision(10) << results_MC.first
+               << setw(20) << setprecision(10) << results_MC.second 
+               << setw(20) << setprecision(10) << CPU_time
+               << endl;
+  }
+  outfilepar.close();
   
   /*
   // Exercise b) output
