@@ -9,7 +9,19 @@ using std::sqrt;
 using std::exp;
 
 double int_func_cart(double alpha, double x1, double y1, double z1, double x2, double y2, double z2)
-{
+  /*
+  Computes the integrand in the integral expression for the quantum mechanical
+  expectation value of the correlation energy between two electrons which repel
+  each other via the classical Coulomb interaction in cartesian coordinates.
+  ------------
+  alpha: double
+    Constant in the exponential term of the integrand.
+  x1, y1, z1: double
+  Cartesian coordinates for the vector r1
+  x2, y2, z2: double
+    Cartesian coordinates for the vector r2
+  */
+{   
     double r1 = sqrt(x1 * x1 + y1 * y1 + z1 * z1);
     double r2 = sqrt(x2 * x2 + y2 * y2 + z2 * z2);
     double r12 = sqrt((x1 - x2) * (x1 - x2) +
@@ -25,6 +37,18 @@ double int_func_cart(double alpha, double x1, double y1, double z1, double x2, d
 double int_func_spherical(double u1, double u2,
                           double theta1, double theta2,
                           double phi1, double phi2)
+  /*
+  Computes the integrand in the integral expression for the quantum mechanical
+  expectation value of the correlation energy between two electrons which repel
+  each other via the classical Coulomb interaction in spherical coordinates.
+  ------------
+  u1: double
+    VENTE MED DETTE!!!!!
+  x1, y1, z1: double
+  Cartesian coordinates for the vector r1
+  x2, y2, z2: double
+    Cartesian coordinates for the vector r2
+  */
 {
     double cos_b = cos(theta1) * cos(theta2) + sin(theta1) * sin(theta2) * cos(phi1 - phi2);
     double r12 = u1 * u1 + u2 * u2 - 2 * u1 * u2 * cos_b;
@@ -38,6 +62,19 @@ double int_func_spherical(double u1, double u2,
 
 double gauleg_quad(double a, double b, int N, double alpha)
 {
+  /*
+  Calculates the integral in cartesian coordinates
+  using gaussian quadrature with legendre plynomials.
+  ------------
+  a: double
+    Lower limit of the integral
+  b: double
+    Upper limit of the integral
+  N: int
+    number of grid points between a and b
+  alpha: double
+    Constant in the exponential term of the integrand.
+  */
     double *x = new double[N];
     double *w = new double[N];
 
@@ -58,6 +95,20 @@ double gauleg_quad(double a, double b, int N, double alpha)
 }
 
 double gauss_quad_improved(int N, double alpha)
+  /*
+  Calculates the integral in spherical coordinates using 
+  gaussian quadrature with legendre plynomials and 
+  laguerre polynomials on the radial axis.
+  ------------
+  a: double
+    Lower limit of the integral
+  b: double
+    Upper limit of the integral
+  N: int
+    number of grid points between limits a and b
+  alpha: double
+    Constant in the exponential term of the integrand.
+  */
 {   double *u = new double[N+1];
     double *theta = new double[N];
     double *phi = new double[N];
@@ -94,6 +145,22 @@ double gauss_quad_improved(int N, double alpha)
 }
 
 std::pair<double, double> monte_carlo(double a, double b, int N, double lambda, double alpha, int number_of_threads)
+  /*
+  Calculates the integral in cartesian coordinates 
+  using monte-carlo integration.
+  ------------
+  a: double
+    Lower limit of the integral
+  b: double
+    Upper limit of the integral
+  N: int
+    number of grid points between a and b
+  alpha: double
+    Constant in the exponential term of the integrand.
+  number_of_threads: int
+    Number of threads on  the 
+    processor the program is run   
+  */
 {
     double I;
     double var;
@@ -130,6 +197,19 @@ std::pair<double, double> monte_carlo(double a, double b, int N, double lambda, 
 }
 
 std::pair<double, double> monte_carlo_improved(int N, double alpha, int number_of_threads)
+  /*
+  Calculates the integral in spherical coordinates using monte-carlo
+  integration with importance and exponential distribution for the
+  radial axis.
+  ------------
+  N: int
+    number of grid points between a and b
+  alpha: double
+    Constant in the exponential term of the integrand.
+  number_of_threads: int
+    Number of threads on  the 
+    processor the program is run 
+  */
 {
   double I;
   double func_val;
@@ -168,55 +248,4 @@ std::pair<double, double> monte_carlo_improved(int N, double alpha, int number_o
 
   std::pair<double, double> results = make_pair(I, var);
   return results;
-}
-
-int main(int argc, char *argv[])
-{
-    int number_of_threads;
-
-    if (argc != 2){
-      throw std::invalid_argument("Please provide exactly one command line argument deciding the number of threads, use -1 to use all available");
-    }
-    else {
-      number_of_threads = atoi(argv[1]);
-    }
-
-    if (number_of_threads == -1){
-      number_of_threads = omp_get_max_threads();
-    }
-    else if (number_of_threads > omp_get_max_threads()){
-      throw std::invalid_argument("Number of threads chosen is higher than the max available!");
-    }
-    else if (number_of_threads <= 0){
-      throw std::invalid_argument("Please choose a positive, non-zero amount of threads. To use all threads, choose -1");
-    }
-    double analytical =  5 * PI * PI / (16 * 16);
-    double alpha = 2;
-    int N = 1e7;
-
-    double t_start = omp_get_wtime();
-    std::pair<double, double> results_MC_improved = monte_carlo_improved(N, alpha, number_of_threads);
-    double t_end = omp_get_wtime();
-    double CPU_time = 1000.0 * (t_end - t_start);
-
-    double integral_MC_improved = results_MC_improved.first;
-    double confidence_MC_improved = results_MC_improved.second;
-    cout << "Improved MC: Time: "<< CPU_time << " ms | Numerical integral: " << integral_MC_improved << "| Analytical: " << analytical << "| Variance: " << confidence_MC_improved << endl;
-
-
-    double lambda = 1.5;
-    double a = - lambda;
-    double b = lambda;
-
-    t_start = omp_get_wtime();
-    std::pair<double, double> results_MC = monte_carlo(a, b, N, lambda, alpha, number_of_threads);
-    t_end = omp_get_wtime();
-    CPU_time = 1000.0 * (t_end - t_start);
-
-    double integral_MC = results_MC.first;
-    double confidence_MC = results_MC.second;
-    cout << "Brute MC: Time: "<< CPU_time << " ms | Numerical integral: " << integral_MC << "| Analytical: " << analytical << "| Variance: " << confidence_MC << endl;
-
-
-    return 0;
 }
