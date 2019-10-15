@@ -1,7 +1,6 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-# include <armadillo>
 # include <iostream> 
 # include <fstream>
 # include <cmath> 

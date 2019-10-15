@@ -84,6 +84,7 @@ int main(int argc, char *argv[])
   double error_gauleg;
   double error_gauss_improved;
   cout << gauss_quad_improved( 2, 2.0) << endl;
+  
   ofstream outfile;
   outfile.open("Exercise_a_b.txt");
   outfile << " N: " << " Error gualeg_quad: " << " Error gauss_quad_improved: " << endl;

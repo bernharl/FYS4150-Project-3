@@ -105,17 +105,17 @@ double gauss_quad_improved(int N, double alpha)
   alpha: double
     Constant in the exponential term of the integrand.
   */
-{   double *u = new double[N+1];
+{   double *u = new double[N + 1];
     double *theta = new double[N];
     double *phi = new double[N];
 
-    double *w_u = new double[N+1];
+    double *w_u = new double[N + 1];
     double *w_theta = new double[N];
     double *w_phi = new double[N];
 
 
     double I = 0;
-    gauss_laguerre(u, w_u, N+1, 2);
+    gauss_laguerre(u, w_u, N + 1, 2);
     gauleg(0, PI, theta, w_theta, N);
     gauleg(0, 2 * PI, phi, w_phi, N);
     for (int i = 1; i <= N; i++){
@@ -136,7 +136,7 @@ double gauss_quad_improved(int N, double alpha)
     delete [] w_u;
     delete [] w_theta;
     delete [] w_phi;
-    cout << I << endl;
+    //cout << I << endl;
     return I / (32 * pow(alpha, 5));
 }
 
