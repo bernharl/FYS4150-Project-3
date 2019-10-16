@@ -1,0 +1,68 @@
+\documentclass[twocolumn]{aastex62}
+\newcommand{\vdag}{(v)^\dagger}
+\newcommand\aastex{AAS\TeX}
+\newcommand\latex{La\TeX}
+\usepackage{amsmath}
+\usepackage{physics}
+\usepackage{hyperref}
+\usepackage{natbib}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+
+\begin{document}
+
+\title{Solving Eigenvalue Problems by Means of the Jacobi Algorithm}
+
+\author{Håkon Tansem}
+
+\author{Nils-Ole Stutzer}
+
+\author{Bernhard Nornes Lotsberg}
+
+\begin{abstract}
+\end{abstract}
+
+\section{Introduction} \label{sec:intro}
+When solving problems in science and mathematics an ever recurring problem is to solve integrals. Integrals are found in all sorts of manners both directely and indirectely though e.g. differential equations. In this paper we will consider ways of solving an example of a six dimensional integral in several different ways. We will consider a brute force Gauss-Legendre quadrature, an improved Gauss-Laguerre quadrature, a brute force monte carlo integration and a monte carlo integration with importance sampling. The integral to solve is an expectation value problem from quantum mechanics. The resulting integrals will be compared to the analytical solution and the run times of each mothod are compared, in order to find which method is most efficient.
+
+In the theory section we present needed theory wich we discuss how to implement in the method section. The results are presented in the results section and discussed in the discussion section.
+
+\section{Theory} \label{sec:theory}
+\subsection{The integral}
+Before stating the needed integration methods we used we present the integral to integrate.
+
+First we assume that the wave function of two electrons can be modelled like a the single-particle wave function of an electron in the hydrogen atom. The wave function of the $i$th electon in the 1 $s$ state is given in terms of
+\begin{align}
+	\vec{r}_i = x_i \hat{e}_x + y_i\hat{e}_y + z_i\hat{e}_z
+\end{align} 
+the dimensionless posission, where $\hat{e}_i$ are orthonormal unit vectors, so that the wave function
+\begin{align}
+	\psi_{1,s}(\vec{r}_i) = e^{-\alpha r_i}.
+\end{align}
+The distance $r_i = \sqrt{x_i^2 + y_i^2 + z_i^2}$ and we let the parameter $\alpha = 2$ corresponding to the charge of a helium $Z = 2$. Then the ansats for the wave function for two electrons is given by the product of the two 1 $s$ wave functions 
+\begin{align}
+	\Psi(\vec{r}_1, \vec{r}_2) = e^{-\alpha(r_1 + r_2)}.
+\end{align}
+We now want to find the expectation value of the correlation energy between electrons which repel each other by means of the Coulomb interaction as 
+\begin{align}
+\langle \frac{
+1}{\vec{r}_1 - \vec{r}_2}\rangle = \int^\infty_{-\infty} d\vec{r}_1d\vec{r}_2 e^{-2\alpha(r_1 + r_2)}\frac{1}{|\vec{r}_1 - \vec{r}_2|}.
+\end{align}
+This integral has an analytical solution $5\pi^2/16^2$, which we can later compare with.
+\subsection{Brute force Gauss-Legendre quadrature}
+
+
+\section{Method} \label{sec:method}
+\subsection{Classical Wave - The Buckling Beam Problem}
+
+\section{Results} \label{sec:results}
+\section{Discussion} \label{sec:discussion}
+\section{Conclusion} \label{sec:conclusion}
+
+%nocite{jensen:2019}
+%\bibliographystyle{aasjournal}
+%\bibliography{ref}
+
+\end{document}
+
