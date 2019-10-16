@@ -51,7 +51,50 @@ We now want to find the expectation value of the correlation energy between elec
 \end{align}
 This integral has an analytical solution $5\pi^2/16^2$, which we can later compare with.
 \subsection{Brute force Gauss-Legendre quadrature}
+The following theory presented follows closely \citep[Ch. 5.3]{jensen:2019}. 
 
+The essence of Gaussian Quadrature (GQ) is to approximate an integral 
+\begin{align}
+	I = \int f(x) dx \approx \sum^N_{i = 1} \omega_i f(x_i),
+\end{align} 
+for some weights $\omega_i$ and grid points $x_i$. The grid points and wights are obtained through the zeros of othogonal polynomials. These polynomials are orthogonal on some intervale, for instance $[-1, 1]$ for Legendre polynomials. Since we must find $N$ grid points and weigths, we must fit $2N$ parameters. Therefore we must approximate the integrand $f(x)$ by a polynomial of degree $2N-1$, i.e. $f(x) \approx P_{2N-1}(x)$. Then the integral 
+\begin{align}
+	I \approx \int P_{2N-1}(x)dx = \sum^{N-1}_{i=0}P_{2N-1}(x_i) \omega_i.
+\end{align} 
+GQ can integrate all polynomials of degree up to $2N-1$ exactelly, we thus get an equallity when approximating the integral over $P_{2N-1}$. 
+
+If we choose to expande the polynomial $P_{2N-1}$ in terms of the Legendre polynomials $L_N$, we can through polynomial devision write 
+\begin{align}
+	P_{2N-1} = L_N(x)P_{N-1}(x) + Q_{N-1}(x),
+\end{align}
+where $P_{N-1}$ and $Q_{N-1}$ are polynomials of degree $N-1$. We can thus write 
+\begin{align}
+	I \approx \int^1_{-1} P_{2N-1}(x) dx &= \int^1_{-1} (L_N(x)P_{N-1}(x) + Q_{N-1}(x))dx \\
+	&= \int^1_{-1}Q_{N-1}(x)dx,
+\end{align}
+where the last equallity is due to the orthogonallity between $L_N(x)$ and $P_{N-1}$. Furthermore if one lets $x_k$ be the zeros of $L_N$ we have $P_{2N-1} = Q_{N-1}$, for $k = 0, 1, 2,\ldots, N-1$, we can fully define the polynomial $Q_{N-1}(x)$ and thus the integral. The polynomial $Q_{N-1}(x)$ can further be expanded in terms of the Legendre basis 
+\begin{align}
+	Q_{N-1}(x) = \sum^{N-1}_{i=0} \alpha L_i(x).
+\end{align}
+Integrating this we get
+\begin{align}
+	\int^1_{-1}Q_{N-1}(x)dx = \sum^{N-1}_{i=0} \alpha_i\int^1_{-1}L_0(x)L_i(x) dx = 2\alpha,
+\end{align}
+where we insert that the first Legendre polynomial is normalized $L_0 = 1$ and utilize the orthogonality relation of the basis, i.e. $\int^1_{-1}L_i(x)L_j(x)dx = \frac{2}{2_i + 1}\delta_{ij}$.
+
+Since we know the value of $Q_{N-1}(x)$ at the zeros of $L_N$, we can rewrite the expansion of $Q_{N-1}$ as
+\begin{align}
+	Q_{N-1} (x_k)= \sum^{N-1}_{i=0} \alpha L_i(x_k).
+	\label{eq:Qexpansion}
+\end{align}
+The resulting matrix $L_i(x_k) = L_{ik}$ has linearly independent columns due to the Legendre polynomials being linearly independent as well. Therefore the matrix $L_{ik}$ is orthogonal, i.e.
+\begin{align}
+	L^{-1}L = I.
+\end{align}
+We thus multiply both sides of (\ref{eq:Qexpansion}) by $\sum^{N-1}_{i=0}L^{-1}_{ij}$, so that 
+\begin{align}
+	\alpha = \sum_{i=0}^{N-1} (L^{-1})_{ki}Q_{N-1}(x_i)
+\end{align}
 
 \section{Method} \label{sec:method}
 \subsection{Classical Wave - The Buckling Beam Problem}
@@ -60,9 +103,9 @@ This integral has an analytical solution $5\pi^2/16^2$, which we can later compa
 \section{Discussion} \label{sec:discussion}
 \section{Conclusion} \label{sec:conclusion}
 
-%nocite{jensen:2019}
-%\bibliographystyle{aasjournal}
-%\bibliography{ref}
+nocite{jensen:2019}
+\bibliographystyle{aasjournal}
+\bibliography{ref}
 
 \end{document}
 

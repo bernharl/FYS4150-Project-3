@@ -42,8 +42,8 @@ double int_func_spherical(double u1, double u2,
   expectation value of the correlation energy between two electrons which repel
   each other via the classical Coulomb interaction in spherical coordinates.
   ------------
-  u1: double
-    VENTE MED DETTE!!!!!
+  u1, u2: double
+    Dimensionless radial distance
   x1, y1, z1: double
   Cartesian coordinates for the vector r1
   x2, y2, z2: double
@@ -57,6 +57,25 @@ double int_func_spherical(double u1, double u2,
       return 0;
     }
     return 1.0 / sqrt(r12);
+
+}
+
+double debug_integrand(double u1, double u2,
+                       double theta1, double theta2,
+                       double phi1, double phi2)
+  /*
+  Integrand function with known analytical integral. Used in unit test.
+  ------------
+  u1: double
+    VENTE MED DETTE!!!!!
+  x1, y1, z1: double
+  Cartesian coordinates for the vector r1
+  x2, y2, z2: double
+    Cartesian coordinates for the vector r2
+  */
+{
+    double integrand = 1;
+    return integrand;
 
 }
 
@@ -94,7 +113,10 @@ double gauleg_quad(double a, double b, int N, double alpha)
     return I;
 }
 
-double gauss_quad_improved(int N, double alpha)
+double gauss_quad_improved(int N, double alpha, 
+                           double (*int_func)(double, double,
+                                              double, double,
+                                              double, double))
   /*
   Calculates the integral in spherical coordinates using 
   gaussian quadrature with legendre plynomials and 
@@ -104,6 +126,8 @@ double gauss_quad_improved(int N, double alpha)
     number of grid points between limits a and b
   alpha: double
     Constant in the exponential term of the integrand.
+  int_func: double
+    Integrand function.
   */
 {   double *u = new double[N + 1];
     double *theta = new double[N];
@@ -124,7 +148,7 @@ double gauss_quad_improved(int N, double alpha)
     for (int m = 0; m < N; m++){
     for (int n = 0; n < N; n++){
         I += w_u[i] * w_u[j] * w_theta[k] * w_theta[l] * w_phi[m] * w_phi[n]
-             * int_func_spherical(u[i], u[j], theta[k], theta[l], phi[m], phi[n]) * sin(theta[k]) * sin(theta[l]);
+             * int_func(u[i], u[j], theta[k], theta[l], phi[m], phi[n]) * sin(theta[k]) * sin(theta[l]);
     }}}}}} 
 
     delete [] u;

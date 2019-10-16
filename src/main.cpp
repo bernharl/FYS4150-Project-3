@@ -84,15 +84,15 @@ int main(int argc, char *argv[])
   double error_gauleg;
   double error_gauss_improved;
   /*
-  cout << gauss_quad_improved(30, 2.0) << "  " << analy << endl;
+  cout << gauss_quad_improved(30, 2.0, int_func_spherical) << "  " << analy << endl;
   
   ofstream outfile;
   outfile.open("Exercise_a_b.txt");
   outfile << " N: " << " Error gualeg_quad: " << " Error gauss_quad_improved: " << endl;
   for (int i = 1; i <= 6; i++)
   { 
-    error_gauleg = std::fabs(gauleg_quad( -lambda, lambda, i, 2.0) - analy);
-    error_gauss_improved = std::fabs(gauss_quad_improved( i, 2.0) - analy);
+    error_gauleg = std::fabs(gauleg_quad( -lambda, lambda, i, 2.0, int_func_spherical) - analy);
+    error_gauss_improved = std::fabs(gauss_quad_improved( i, 2.0, int_func_spherical) - analy);
     outfile << setw(20) << setprecision(10) << i
             << setw(20) << setprecision(10) << error_gauleg
             << setw(20) << setprecision(10) << error_gauss_improved
@@ -180,7 +180,7 @@ int main(int argc, char *argv[])
   { 
     N = std::round(std::pow(10, i));
     outfile << setw(20) << setprecision(10) << N 
-            << setw(20) << setprecision(10) << gauss_quad_improved( N, 2) 
+            << setw(20) << setprecision(10) << gauss_quad_improved( N, 2, int_func_spherical) 
             << endl;
   }
   outfile.close();
