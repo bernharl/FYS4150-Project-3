@@ -46,6 +46,7 @@ The distance $r_i = \sqrt{x_i^2 + y_i^2 + z_i^2}$ and we let the parameter $\alp
 \end{align}
 We now want to find the expectation value of the correlation energy between electrons which repel each other by means of the Coulomb interaction as 
 \begin{align}
+\label{eq:cartint}
 \langle \frac{
 1}{\vec{r}_1 - \vec{r}_2}\rangle = \int^\infty_{-\infty} d\vec{r}_1d\vec{r}_2 e^{-2\alpha(r_1 + r_2)}\frac{1}{|\vec{r}_1 - \vec{r}_2|}.
 \end{align}
@@ -57,6 +58,57 @@ This integral has an analytical solution $5\pi^2/16^2$, which we can later compa
 \subsection{Classical Wave - The Buckling Beam Problem}
 
 \section{Results} \label{sec:results}
+The results were produced running on a MacBook Pro (macOS Mojave 10.14.6) with
+8gb RAM using a dual coreIntel Core i5-7360U $2.3$GHz CPU with four threads. The program was compiled
+using openMP for the parallelization with the gcc compiler version (Homebrew GCC
+$9.2.0\_1$) $9.2.0$.\\\\ When calculating the integral, the relative error was
+calculated for the integral given by (\ref{eq:cartint}) using the brute force
+method, as describred in section(REFERER TIL BRUTE FORCE QUAD SECTION). The
+relative error was also calculated for the integral in spherical coordinates given by (REFERER TIL SFÆRISK
+INTEGRAL) using the improved method, as described in section (REFERER TIL
+IMPROVED GAUSSIAN QUAD SECTION). These results are shown in figure
+\ref{fig:relerrquad}. In the figure a line is drawn when the relative error
+surpasses $10^{-2}$ to illustrate when the method achieves three digit precision.\\
+\begin{figure}[h]
+	\includegraphics[scale=0.55]{{Figures/exercise_a_b}.pdf}
+	\caption{Figure showing the relative error for the brute force gaussian quadrature and the improved gaussian quadrature methods described in section (REFERER TIL SEKSJON). A line is drawn when the relative error is $10^-2$ to illustrate when the integral reaches three digit precision.}
+	\label{fig:relerrquad}
+\end{figure}
+The relative error was also compared for both the brute force Monte Carlo method
+and the improved Monte Carlo method described in section (REFERER TIL BRUTE
+FORCE) and (REFERER TIL IMPROVED) respectively. This is shown in figure
+\ref{fig:rellerrcarlo}. For the same calculations using both Monte Carlo methods, the variance was also plotted.
+This is result is illustrated in figure \ref{fig:variancecarlo}. 
+\begin{figure}[h]
+	\includegraphics[scale=0.55]{{Figures/error_monte_carlo}.pdf}
+	\caption{Figure showing the relative error for the brute force and the improved Monte Carlo methods described in section (REFERER TIL SEKSJON).}
+	\label{fig:rellerrcarlo}
+\end{figure}
+
+\begin{figure}[h]
+	\includegraphics[scale=0.55]{{Figures/variance_monte_carlo}.pdf}
+	\caption{Figure showing the variance for the brute force and the improved Monte Carlo methods as described in sections (REFERER TIL SEKSJONER) and respectively.}
+	\label{fig:variancecarlo}
+\end{figure}
+The CPU time for both the brute force and the improved Monte Carlo methods was calculated using no
+parallelization and parallelization with two threads. This is shown in figure
+\ref{fig:CPUcarlo}. The three different compiler flags -O1, -O2 and -O3 was also
+compared to study their impact on the CPU time, which is shown in figure
+\ref{fig:CPUcarloflag}. This result was produced using parallelization with four
+threads.
+\begin{figure}[h]
+	\includegraphics[scale=0.55]{{Figures/cpu_time_monte_carlo}.pdf}
+	\caption{Figure showing the CPU time the brute force and the improved Monte Carlo methods described in section (REFERER TIL SEKSJON). For both methods the CPU time was compared both unparallelized and parallelized with two threads.}
+	\label{fig:CPUcarlo}
+\end{figure}
+
+\begin{figure}[h]
+	\includegraphics[scale=0.55]{{Figures/cpu_time_compilerflag}.pdf}
+	\caption{Figure showing showing the CPU time for the improved Monte Carlo method, as described in section (REFERER TIL SEKSJON), using the different compiler flags -O1, -O2 and -O3. These results were produced using parallelization with four threads.}
+	\label{fig:CPUcarloflag}
+\end{figure}
+
+
 \section{Discussion} \label{sec:discussion}
 \section{Conclusion} \label{sec:conclusion}
 

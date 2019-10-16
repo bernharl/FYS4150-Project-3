@@ -4,11 +4,11 @@ import matplotlib.pyplot as plt
 # Setting fonts for pretty plot
 fonts = {
     "font.family": "serif",
-    "axes.labelsize": 10,
-    "font.size": 10,
-    "legend.fontsize": 10,
-    "xtick.labelsize": 10,
-    "ytick.labelsize": 10,
+    "axes.labelsize": 16,
+    "font.size": 16,
+    "legend.fontsize": 16,
+    "xtick.labelsize": 16,
+    "ytick.labelsize": 16,
 }
 plt.rcParams.update(fonts)
 
@@ -21,7 +21,7 @@ error_gauss_laguerre = data[:, 2]
 
 fig, ax = plt.subplots()
 # The golden ratio for nice plots size, also based on width of tex document
-fig.set_size_inches(2 * 2.9, 2 * 1.81134774961)
+# fig.set_size_inches(2 * 2.9, 2 * 1.81134774961)
 
 # Plotting data
 ax.semilogy(N, error_gauleg, label = "Brute force")
@@ -33,4 +33,4 @@ ax.set_ylabel(r"Absolute error")
 fig.tight_layout()
 ax.legend(loc=1)
 # Saving high quality figure
-fig.savefig("../doc/Figures/exercise_a_b.eps", dpi=1000)
+fig.savefig("../doc/Figures/exercise_a_b.pdf", dpi=1000)
