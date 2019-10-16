@@ -26,7 +26,7 @@ fig.set_size_inches(2 * 2.9, 2 * 1.81134774961)
 # Plotting data
 ax.semilogy(N, error_gauleg, label = "Brute force")
 ax.semilogy(N, error_gauss_laguerre, label = "Improved")
-ax.semilogy(N, np.ones_like(N) * 1e-2)
+ax.semilogy(N, np.ones_like(N) * 1e-2, label = "Three digit precision")
 ax.grid()
 ax.set_xlabel(r"$N$")
 ax.set_ylabel(r"Absolute error")
