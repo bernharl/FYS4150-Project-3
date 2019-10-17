@@ -1,4 +1,15 @@
-CPPflags= c++ -std=c++11
+UNAME := $(shell uname)
+
+ifeq ($(UNAME), Linux) # Linux
+$(info "Comiling for Linux")
+CPPflags= g++ -std=c++11
+endif
+ifeq ($(UNAME), Darwin) # Mac
+$(info "Compiling for Mac using g++-9 for openMP support")
+CPPflags= /usr/local/bin/g++-9 -std=c++11 -L/usr/local/Cellar/armadillo/9.600.5/lib/
+endif
+
+#CPPflags= c++ -std=c++11
 
 TESTPROG= testcode.out
 #MAINPROG= mainprog.out
