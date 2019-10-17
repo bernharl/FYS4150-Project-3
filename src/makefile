@@ -1,6 +1,6 @@
-CPPflags= c++ -std=c++11
-
-TESTPROG= testcode.out
+CPPflags = g++-9 -std=c++11
+MAINPROG = mainprog.out
+TESTPROG = testcode.out
 #MAINPROG= mainprog.out
 LIB = -fopenmp
 all:	${TESTPROG} ${MAINPROG}
@@ -16,7 +16,8 @@ test-functions.o :			test-functions.cpp
 		        	${CPPflags} -c test-functions.cpp
 
 
-
+${MAINPROG} :	   	main.cpp
+					${CPPflags} main.cpp ${LIB} -o ${MAINPROG}
 
 
 
