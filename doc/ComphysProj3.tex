@@ -46,13 +46,13 @@ The distance $r_i = \sqrt{x_i^2 + y_i^2 + z_i^2}$ and we let the parameter $\alp
 \end{align}
 We now want to find the expectation value of the correlation energy between electrons which repel each other by means of the Coulomb interaction as 
 \begin{align}
-\label{eq:cartint}
 \langle \frac{
 1}{\vec{r}_1 - \vec{r}_2}\rangle = \int d\vec{r}_1d\vec{r}_2 e^{-2\alpha(r_1 + r_2)}\frac{1}{|\vec{r}_1 - \vec{r}_2|}.
+\label{eq:integral}
 \end{align}
 This integral has an analytical solution $5\pi^2/16^2$, which we can later compare with.
 \subsection{Brute Force Gauss-Legendre Quadrature}
-The following theory presented follows closely \citep[Ch. 5.3]{jensen:2019}. 
+The following theory and derivations of the integration methods presented follows closely \citep[Ch. 5.3]{jensen:2015}. 
 
 The essence of Gaussian Quadrature (GQ) is to approximate an integral 
 \begin{align}
@@ -107,12 +107,12 @@ We now have an integral approximation
 	I &= \int^1_{-1} f(x) dx \approx \int^1_{-1} P_{2N-1}(x)dx\\
 	 &= \sum^{N-1}_{i=0}\omega_iP_{2N-1}(x_i), 
 \end{align}
-if $f(x)$ can be approximated by a poluynomial of degree $2N-1$ $P_{2N-1}(x)$. When performing an integral with more general limits $[a,b]$, one can now perform a simple change of variables $\tilde{x} = \frac{b - a}{2}x + \frac{b + a}{2}$, to accomodate for this.
+if $f(x)$ can be approximated by a poluynomial of degree $2N-1$ $P_{2N-1}(x)$. When performing an integral with more general limits $[a,b]$, one can now perform a simple change of variables $\tilde{x} = \frac{b - a}{2}x + \frac{b + a}{2}$, to accomodate for this. Note that when considering the Gauss-Legendre approach, and we integrate (\ref{eq:integral}) using cartesian coordinates, we must let the limits of all six cartesian itegrals $a = -\lambda$ and $b = \lambda$ where $\lambda\to\infty$.
 
 When integrating a six dimensional integral like the quantum mechanical problem stated earlier, we can simply use Gauss-Legendre quadrature on all six integrals in a brute force way. Then the integral simply becomes 
 \begin{align}
 	I &= \int^\infty_{-\infty} d\vec{r}_1d\vec{r}_2 e^{-2\alpha(r_1 + r_2)}\frac{1}{|\vec{r}_1 - \vec{r}_2|} \\
-	&= \sum_{i, j, k, l, m, n = 0}^{N-1} \omega^{x_1}_i \omega^{y_1}_j \omega^{z_1}_k \omega^{x_2}_l \omega^{y_2}_m \omega^{z_2}_n f(x_1, y_1, z_1, x_2, y_2, z_2),
+	&\approx \sum_{i, j, k, l, m, n = 0}^{N-1} \omega^{x_1}_i \omega^{y_1}_j \omega^{z_1}_k \omega^{x_2}_l \omega^{y_2}_m \omega^{z_2}_n f(x_1^i, y_1^j, z_1^k, x_2^l, y_2^m, z_2^n),
 \end{align} 
 where each cartesian variable $x_i$ results in its own weight, and the integrand is denoted by the function $f$. Note that also a change of variables was performed to accomodate for the different integration limits.
 
@@ -130,7 +130,7 @@ In order to transorm our integrand to a form resembeling (\ref{eq:laguerre_integ
 	|\vec{r}_1 - \vec{r}_2| &= \sqrt{r_1^2 + r_2^2 - 2r_1r_2cos(\beta)},
 \end{align}
 where $cos(\beta) = cos(\theta_1)\cos(\theta_2) + \sin(\theta_1)\sin(\theta_2)\cos(\phi_1 - \phi_2)$.
-We introduce the change of variables $u = \alpha r$ so that the integral is on the form
+We introduce the change of variables $u = \alpha r \implies du = \alpha dr$ so that the integral is on the form
 \begin{align}
 	I = \frac{1}{32 \alpha^5} \int^\pi_0\int^{\pi}_0\int^{2\pi}_0\int^{2\pi}_0\int^\infty_0\int^\infty_0 fdu_1du_2d\theta_1d\theta_2d\phi_1d\phi_2,
 \end{align}
@@ -148,7 +148,7 @@ where we let $p(x) = \frac{1}{b-a}$ be the uniform probability density function 
 \begin{align}
 	\langle f(x)\rangle = \int^b_a f(x)p(x)dx \approx \frac{1}{N}\sum_{i=0}^{N-1} f(x_i),
 \end{align}
-where we used that the expectation value of $f(x)$ is approximately the average of the $f(x_i)$'s where the $x_i$'s are drawn from the distribution $p(x)$, for large enough $N$. 
+where we used that the expectation value of $f(x)$ is approximately the average of the $f(x_i)$'s where the $x_i$'s are drawn from the distribution $p(x)$, for large enough sample size $N$. 
 
 Note that we implisitly performed a mapping in this case. Because uniform distribution by default only returns values $y\in[0, 1]$, we change the variable to $x = a + (b-a)y$ so as to draw values $y_i$ from a uniform distribution between $a$ and $b$. 
 
@@ -162,7 +162,7 @@ In order to get an estimate for the accuracy of the integration we can calculate
 \end{align}
 The variance is a measure of how far the integral $I$ is from the mean.
 
-Considering the quantum mechanical integral in cartesian we want to compute, we let $a=-\lambda$ and $b=\lambda$ for some $\lambda$ approximating infinity. The we simply get a six-dimensional expectation value so that 
+Considering the quantum mechanical integral in cartesian we want to compute, we let the limits of the six integrals be $a=-\lambda$ and $b=\lambda$ for some $\lambda$ approximating infinity. The we simply get a six-dimensional expectation value so that 
 \begin{align}
 	I = (b-a)^6\langle f \rangle \approx \frac{(b-a)^6}{N}\sum^{N-1}_{i=0} f(x_1^i, y_1^i, z_1^i, x_2^i, y_2^i, z_2^i),
 \end{align}
@@ -191,59 +191,15 @@ The final integral then looks as follows
 \end{align}
 where the index $i$ simply represents that the corresponding sample is drawn from its respective PDF.
 \section{Method} \label{sec:method}
+\texttt{weights.cpp}-file
+
+When implementing the two GQ integrators, the integration sum approximating the six-dimensional integral are simply calculated a sixfold loop. When calculating the integration weights and grid points we use the algorithms presented in (NUMERICAL RECEPIES) (implemented in the \texttt{weights.cpp}-file). In the Gauss-Legendre quadrature the integration limits are the same for all six cartesian variable, we thus get the same weights and grid points for all coordinates using the \texttt{gauleg}-function provided. However, when solving the integral (\ref{eq:integral}) in spherical coordinates, we compute the weights of the angular integrals we again need to use the Gauss-Legendre weights from the \texttt{gauleg}-function, while the weights and meshpoints for the radial integrals are computed using the \texttt{gauss_laguerre}-function provided.
+
+The integrals where calulated with the two GC methods for different grid sizes  $N$ and then compared. In order to produce a satisfactory result using the Gauss-Legendre quadrature we need to tweek the grid size $N$ and infinity approximations $\lambda$.
+
+When implementing the Monte Carlo integrations, we produce the needed psuedo-random numbers using a Mersenne-Twister algorithm, as it has a very large period. Furthermore the mapping from the uniform PDF with $x\in[0,1]$ to the uniform PDF with $x\in[a,b]$ and the exponential distributions are done implisitly within the C++ \texttt{random}-package. Last the Monte Carlo integrals where computed for different sample sizes $N$ and for different degrees of parallelization. 
 
 \section{Results} \label{sec:results}
-The results were produced running on a MacBook Pro (macOS Mojave 10.14.6) with
-8gb RAM using a dual coreIntel Core i5-7360U $2.3$GHz CPU with four threads. The program was compiled
-using openMP for the parallelization with the gcc compiler version (Homebrew GCC
-$9.2.0\_1$) $9.2.0$.\\\\ When calculating the integral, the relative error was
-calculated for the integral given by (\ref{eq:cartint}) using the brute force
-method, as describred in section(REFERER TIL BRUTE FORCE QUAD SECTION). The
-relative error was also calculated for the integral in spherical coordinates given by (REFERER TIL SFÆRISK
-INTEGRAL) using the improved method, as described in section (REFERER TIL
-IMPROVED GAUSSIAN QUAD SECTION). These results are shown in figure
-\ref{fig:relerrquad}. In the figure a line is drawn when the relative error
-surpasses $10^{-2}$ to illustrate when the method achieves three digit precision.\\
-\begin{figure}[h]
-	\includegraphics[scale=0.55]{{Figures/exercise_a_b}.pdf}
-	\caption{Figure showing the relative error for the brute force gaussian quadrature and the improved gaussian quadrature methods described in section (REFERER TIL SEKSJON). A line is drawn when the relative error is $10^-2$ to illustrate when the integral reaches three digit precision.}
-	\label{fig:relerrquad}
-\end{figure}
-The relative error was also compared for both the brute force Monte Carlo method
-and the improved Monte Carlo method described in section (REFERER TIL BRUTE
-FORCE) and (REFERER TIL IMPROVED) respectively. This is shown in figure
-\ref{fig:rellerrcarlo}. For the same calculations using both Monte Carlo methods, the variance was also plotted.
-This is result is illustrated in figure \ref{fig:variancecarlo}. 
-\begin{figure}[h]
-	\includegraphics[scale=0.55]{{Figures/error_monte_carlo}.pdf}
-	\caption{Figure showing the relative error for the brute force and the improved Monte Carlo methods described in section (REFERER TIL SEKSJON).}
-	\label{fig:rellerrcarlo}
-\end{figure}
-
-\begin{figure}[h]
-	\includegraphics[scale=0.55]{{Figures/variance_monte_carlo}.pdf}
-	\caption{Figure showing the variance for the brute force and the improved Monte Carlo methods as described in sections (REFERER TIL SEKSJONER) and respectively.}
-	\label{fig:variancecarlo}
-\end{figure}
-The CPU time for both the brute force and the improved Monte Carlo methods was calculated using no
-parallelization and parallelization with two threads. This is shown in figure
-\ref{fig:CPUcarlo}. The three different compiler flags -O1, -O2 and -O3 was also
-compared to study their impact on the CPU time, which is shown in figure
-\ref{fig:CPUcarloflag}. This result was produced using parallelization with four
-threads.
-\begin{figure}[h]
-	\includegraphics[scale=0.55]{{Figures/cpu_time_monte_carlo}.pdf}
-	\caption{Figure showing the CPU time the brute force and the improved Monte Carlo methods described in section (REFERER TIL SEKSJON). For both methods the CPU time was compared both unparallelized and parallelized with two threads.}
-	\label{fig:CPUcarlo}
-\end{figure}
-
-\begin{figure}[h]
-	\includegraphics[scale=0.55]{{Figures/cpu_time_compilerflag}.pdf}
-	\caption{Figure showing showing the CPU time for the improved Monte Carlo method, as described in section (REFERER TIL SEKSJON), using the different compiler flags -O1, -O2 and -O3. These results were produced using parallelization with four threads.}
-	\label{fig:CPUcarloflag}
-\end{figure}
-
-
 \section{Discussion} \label{sec:discussion}
 \section{Conclusion} \label{sec:conclusion}
 
