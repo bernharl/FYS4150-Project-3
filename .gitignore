@@ -94,7 +94,7 @@ Temporary Items
 
 # user defined
 
-*.pdf
+# *.pdf
 *.log
 *.aux
 *.fls
