@@ -323,7 +323,12 @@ for comparison.
 The results were produced running on a MacBook Pro (macOS Mojave 10.14.6) with
 8gb RAM using a dual coreIntel Core i5-7360U $2.3$GHz CPU with four threads. The
 program was compiled using openMP for the parallelization with the gcc compiler
-version (Homebrew GCC $9.2.0\_1$) $9.2.0$.\\\\ When calculating the integral,
+version (Homebrew GCC $9.2.0\_1$) $9.2.0$.\\\\ For the results listed below we
+found that $\lambda = 1.5$ was a sufficient approximation infinity when using
+grid sizes $N\sim20$ to $N\sim 30$ when using brute force gaussian quadrature
+as described in section \ref{subsec:brute_force_gauss}. This choice for
+$\lambda$ remained the same when calculating the brute force Monte Carlo method
+as described in section \ref{subsec:brute_force_monte_carlo}. When calculating the integral,
 the relative error was calculated for the integral given by (\ref{eq:cartint})
 using the brute force method, as describred in section
 (\ref{subsec:brute_force_gauss}). The relative error was also calculated for the
@@ -334,7 +339,7 @@ when the relative error surpasses $10^{-2}$ to illustrate when the method
 achieves three digit precision.\\
 \begin{figure}[h]
 	\includegraphics[scale=0.55]{{Figures/exercise_a_b}.pdf}
-	\caption{Figure showing the relative error for the brute force gaussian quadrature and the improved gaussian quadrature methods described in subsection \ref{subsec:brute_force_gauss} and \ref{subsec:improved_gauss} respectively. A line is drawn when the relative error is $10^-2$ to illustrate when the integral reaches three digit precision.}
+	\caption{Figure showing the relative error for the brute force gaussian quadrature and the improved gaussian quadrature methods, described in section \ref{subsec:brute_force_gauss} and \ref{subsec:improved_gauss} respectively, as a function of grid resolution $N$. A line is drawn when the relative error is $10^-2$ to illustrate when the integral reaches three digit precision.}
 	\label{fig:relerrquad}
 \end{figure}
 The relative error was also compared for both the brute force Monte Carlo method
@@ -345,13 +350,13 @@ calculations using both Monte Carlo methods, the variance was also plotted. This
 is result is illustrated in figure \ref{fig:variancecarlo}. 
 \begin{figure}[h]
 	\includegraphics[scale=0.55]{{Figures/error_monte_carlo}.pdf}
-	\caption{Figure showing the relative error for the brute force and the improved Monte Carlo methods described in subsection \ref{subsec:brute_force_monte_carlo} and \ref{subsec:improved_monte_carlo} respectively.}
+	\caption{Figure showing the relative error for the brute force and the improved Monte Carlo methods, described in section \ref{subsec:brute_force_monte_carlo} and \ref{subsec:improved_monte_carlo} respectively, as a function of the sample size $N$.}
 	\label{fig:rellerrcarlo}
 \end{figure}
 
 \begin{figure}[h]
 	\includegraphics[scale=0.55]{{Figures/variance_monte_carlo}.pdf}
-	\caption{Figure showing the variance for the brute force and the improved Monte Carlo methods as described in subsection \ref{subsec:brute_force_monte_carlo} and \ref{subsec:improved_monte_carlo} respectively.}
+	\caption{Figure showing the variance for the brute force and the improved Monte Carlo methods as described in section \ref{subsec:brute_force_monte_carlo} and \ref{subsec:improved_monte_carlo} respectively as a function of the sample size $N$.}
 	\label{fig:variancecarlo}
 \end{figure}
 The CPU time for both the brute force and the improved Monte Carlo methods was
@@ -362,13 +367,13 @@ shown in figure \ref{fig:CPUcarloflag}. This result was produced using
 parallelization with four threads.
 \begin{figure}[h]
 	\includegraphics[scale=0.55]{{Figures/cpu_time_monte_carlo}.pdf}
-	\caption{Figure showing the CPU time the brute force and the improved Monte Carlo methods described in subsection \ref{subsec:brute_force_monte_carlo} and \ref{subsec:improved_monte_carlo} respectively. For both methods the CPU time was compared both unparallelized and parallelized with two threads.}
+	\caption{Figure showing the CPU time the brute force and the improved Monte Carlo methods, described in section \ref{subsec:brute_force_monte_carlo} and \ref{subsec:improved_monte_carlo} respectively, as a function of the sample size $N$. For both methods the CPU time was compared both unparallelized and parallelized with two threads.}
 	\label{fig:CPUcarlo}
 \end{figure}
 
 \begin{figure}[h]
 	\includegraphics[scale=0.55]{{Figures/cpu_time_compilerflag}.pdf}
-	\caption{Figure showing showing the CPU time for the improved Monte Carlo method, as described in section (REFERER TIL SEKSJON), using the different compiler flags -O1, -O2 and -O3. These results were produced using parallelization with four threads.}
+	\caption{Figure showing showing the CPU time for the improved Monte Carlo method, described in section \ref{subsec:improved_monte_carlo}, as a function of the sample size $N$ using the different compiler flags -O1, -O2 and -O3. These results were produced using parallelization with four threads.}
 	\label{fig:CPUcarloflag}
 \end{figure}
 \section{Discussion} \label{sec:discussion}
