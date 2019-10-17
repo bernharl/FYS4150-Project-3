@@ -3,7 +3,6 @@
 //   It integrates the simple function x* exp(-x) for the interval
 //   x \in [0,infty). The exact result is 1. For Legendre based quadrature a
 //   tangent mapping is also used.
-#include "weights.h"
 #include <cmath>
 #include <iostream>
 #include <fstream>
