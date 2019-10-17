@@ -184,8 +184,6 @@ std::pair<double, double> monte_carlo(double a, double b, int N, double lambda, 
     double func_val;
     double f = 0;
     double f_2 = 0;
-    mt19937 generator (omp_get_wtime());
-    uniform_real_distribution<double> uniform(-lambda, lambda);
     double x1;
     double y1;
     double z1;
@@ -193,6 +191,8 @@ std::pair<double, double> monte_carlo(double a, double b, int N, double lambda, 
     double y2;
     double z2;
     #pragma omp parallel for reduction (+:f, f_2) num_threads(number_of_threads) private(x1, x2, y1, y2, z1, z2, func_val)
+    mt19937 generator (omp_get_wtime());
+    uniform_real_distribution<double> uniform(-lambda, lambda);
     for (int i = 0; i < N; i++)
     {
         x1 = uniform(generator);
