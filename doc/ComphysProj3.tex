@@ -1,4 +1,4 @@
-\documentclass[twocolumn]{aastex62}
+\documentclass[10pt, twocolumn]{aastex62}
 \newcommand{\vdag}{(v)^\dagger}
 \newcommand\aastex{AAS\TeX}
 \newcommand\latex{La\TeX}
@@ -9,7 +9,8 @@
 \usepackage[T1]{fontenc}
 \usepackage[english]{babel}
 \usepackage[utf8]{inputenc}
-
+\usepackage{layouts}
+ \renewcommand{\familydefault}{\sfdefault}
 \begin{document}
 
 \title{Solving Eigenvalue Problems by Means of the Jacobi Algorithm}
@@ -338,7 +339,7 @@ results are shown in figure \ref{fig:relerrquad}. In the figure a line is drawn
 when the relative error surpasses $10^{-2}$ to illustrate when the method
 achieves three digit precision.\\
 \begin{figure}[h]
-	\includegraphics[scale=0.55]{{Figures/exercise_a_b}.pdf}
+	\includegraphics{{Figures/exercise_a_b}.pdf}
 	\caption{Figure showing the relative error for the brute force gaussian quadrature and the improved gaussian quadrature methods, described in section \ref{subsec:brute_force_gauss} and \ref{subsec:improved_gauss} respectively, as a function of grid resolution $N$. A line is drawn when the relative error is $10^-2$ to illustrate when the integral reaches three digit precision.}
 	\label{fig:relerrquad}
 \end{figure}
@@ -349,13 +350,13 @@ respectively. This is shown in figure \ref{fig:rellerrcarlo}. For the same
 calculations using both Monte Carlo methods, the variance was also plotted. This
 is result is illustrated in figure \ref{fig:variancecarlo}. 
 \begin{figure}[h]
-	\includegraphics[scale=0.55]{{Figures/error_monte_carlo}.pdf}
+	\includegraphics{{Figures/error_monte_carlo}.pdf}
 	\caption{Figure showing the relative error for the brute force and the improved Monte Carlo methods, described in section \ref{subsec:brute_force_monte_carlo} and \ref{subsec:improved_monte_carlo} respectively, as a function of the sample size $N$.}
 	\label{fig:rellerrcarlo}
 \end{figure}
 
 \begin{figure}[h]
-	\includegraphics[scale=0.55]{{Figures/variance_monte_carlo}.pdf}
+	\includegraphics{{Figures/variance_monte_carlo}.pdf}
 	\caption{Figure showing the variance for the brute force and the improved Monte Carlo methods as described in section \ref{subsec:brute_force_monte_carlo} and \ref{subsec:improved_monte_carlo} respectively as a function of the sample size $N$.}
 	\label{fig:variancecarlo}
 \end{figure}
@@ -366,19 +367,19 @@ is shown in figure \ref{fig:CPUcarlo}. The three different compiler flags -O1,
 shown in figure \ref{fig:CPUcarloflag}. This result was produced using
 parallelization with four threads.
 \begin{figure}[h]
-	\includegraphics[scale=0.55]{{Figures/cpu_time_monte_carlo}.pdf}
+	\includegraphics{{Figures/cpu_time_monte_carlo}.pdf}
 	\caption{Figure showing the CPU time the brute force and the improved Monte Carlo methods, described in section \ref{subsec:brute_force_monte_carlo} and \ref{subsec:improved_monte_carlo} respectively, as a function of the sample size $N$. For both methods the CPU time was compared both unparallelized and parallelized with two threads.}
 	\label{fig:CPUcarlo}
 \end{figure}
 
 \begin{figure}[h]
-	\includegraphics[scale=0.55]{{Figures/cpu_time_compilerflag}.pdf}
+	\includegraphics{{Figures/cpu_time_compilerflag}.pdf}
 	\caption{Figure showing showing the CPU time for the improved Monte Carlo method, described in section \ref{subsec:improved_monte_carlo}, as a function of the sample size $N$ using the different compiler flags -O1, -O2 and -O3. These results were produced using parallelization with four threads.}
 	\label{fig:CPUcarloflag}
 \end{figure}
 \section{Discussion} \label{sec:discussion}
 \section{Conclusion} \label{sec:conclusion}
-
+\printinunitsof{in}\prntlen{\textwidth}
 \nocite{jensen:2019}
 \bibliographystyle{aasjournal}
 \bibliography{ref}
