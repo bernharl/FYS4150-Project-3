@@ -2,11 +2,11 @@ UNAME := $(shell uname)
 
 ifeq ($(UNAME), Linux) # Linux
 $(info "Comiling for Linux")
-CPPflags= g++ -std=c++11
+CPPflags= g++ -std=c++11 -Wall
 endif
 ifeq ($(UNAME), Darwin) # Mac
 $(info "Compiling for Mac using g++-9 for openMP support")
-CPPflags= /usr/local/bin/g++-9 -std=c++11 -L/usr/local/Cellar/armadillo/9.600.5/lib/
+CPPflags= /usr/local/bin/g++-9 -std=c++11 -L/usr/local/Cellar/armadillo/9.600.5/lib/ -Wall
 endif
 
 
@@ -22,7 +22,6 @@ ${TESTPROG} :	   		tests-main.o  test-functions.o
 
 tests-main.o :			tests-main.cpp
 		        	${CPPflags} -c tests-main.cpp
-
 
 test-functions.o :			test-functions.cpp
 		        	${CPPflags} -c test-functions.cpp
