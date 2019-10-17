@@ -21,7 +21,7 @@ double int_func_cart(double alpha, double x1, double y1, double z1, double x2, d
   x2, y2, z2: double
     Cartesian coordinates for the vector r2
   */
-{   
+{
     double r1 = sqrt(x1 * x1 + y1 * y1 + z1 * z1);
     double r2 = sqrt(x2 * x2 + y2 * y2 + z2 * z2);
     double r12 = sqrt((x1 - x2) * (x1 - x2) +
@@ -96,8 +96,8 @@ double gauleg_quad(double a, double b, int N, double alpha)
 
 double gauss_quad_improved(int N, double alpha)
   /*
-  Calculates the integral in spherical coordinates using 
-  gaussian quadrature with legendre plynomials and 
+  Calculates the integral in spherical coordinates using
+  gaussian quadrature with legendre plynomials and
   laguerre polynomials on the radial axis.
   ------------
   N: int
@@ -125,7 +125,7 @@ double gauss_quad_improved(int N, double alpha)
     for (int n = 0; n < N; n++){
         I += w_u[i] * w_u[j] * w_theta[k] * w_theta[l] * w_phi[m] * w_phi[n]
              * int_func_spherical(u[i], u[j], theta[k], theta[l], phi[m], phi[n]) * sin(theta[k]) * sin(theta[l]);
-    }}}}}} 
+    }}}}}}
 
     delete [] u;
     delete [] theta;
@@ -139,7 +139,7 @@ double gauss_quad_improved(int N, double alpha)
 
 std::pair<double, double> monte_carlo(double a, double b, int N, double lambda, double alpha, int number_of_threads)
   /*
-  Calculates the integral in cartesian coordinates 
+  Calculates the integral in cartesian coordinates
   using monte-carlo integration.
   ------------
   a: double
@@ -151,8 +151,8 @@ std::pair<double, double> monte_carlo(double a, double b, int N, double lambda, 
   alpha: double
     Constant in the exponential term of the integrand.
   number_of_threads: int
-    Number of threads on  the 
-    processor the program is run   
+    Number of threads on  the
+    processor the program is run
   */
 {
     double I;
@@ -160,8 +160,7 @@ std::pair<double, double> monte_carlo(double a, double b, int N, double lambda, 
     double func_val;
     double f = 0;
     double f_2 = 0;
-    mt19937 generator (omp_get_wtime());
-    uniform_real_distribution<double> uniform(-lambda, lambda);
+
     double x1;
     double y1;
     double z1;
@@ -169,6 +168,8 @@ std::pair<double, double> monte_carlo(double a, double b, int N, double lambda, 
     double y2;
     double z2;
     #pragma omp parallel for reduction (+:f, f_2) num_threads(number_of_threads) private(x1, x2, y1, y2, z1, z2, func_val)
+    mt19937 generator (omp_get_wtime() + omp_get_thread_num());
+    uniform_real_distribution<double> uniform(-lambda, lambda);
     for (int i = 0; i < N; i++)
     {
         x1 = uniform(generator);
@@ -200,8 +201,8 @@ std::pair<double, double> monte_carlo_improved(int N, double alpha, int number_o
   alpha: double
     Constant in the exponential term of the integrand.
   number_of_threads: int
-    Number of threads on  the 
-    processor the program is run 
+    Number of threads on  the
+    processor the program is run
   */
 {
   double I;
@@ -209,10 +210,7 @@ std::pair<double, double> monte_carlo_improved(int N, double alpha, int number_o
   double var;
   double f = 0;
   double f_2 = 0;
-  mt19937 generator (omp_get_wtime());
-  exponential_distribution<double> exponential(1);
-  uniform_real_distribution<double> uniform_theta(0, PI);
-  uniform_real_distribution<double> uniform_phi(0, 2 * PI);
+
   double u1;
   double u2;
   double theta1;
@@ -220,6 +218,10 @@ std::pair<double, double> monte_carlo_improved(int N, double alpha, int number_o
   double phi1;
   double phi2;
   #pragma omp parallel for reduction (+:f, f_2) num_threads(number_of_threads) private(u1, u2, theta1, theta2, phi1, phi2, func_val)
+  mt19937 generator (omp_get_wtime() + omp_get_thread_num());
+  exponential_distribution<double> exponential(1);
+  uniform_real_distribution<double> uniform_theta(0, PI);
+  uniform_real_distribution<double> uniform_phi(0, 2 * PI);
   for (int i = 0; i < N; i++)
   {
       u1 = exponential(generator);
