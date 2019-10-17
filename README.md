@@ -1,7 +1,10 @@
 # FYS4150-Project-3
 Third project in FYS4150 Computational Physics
 
-
+## Dependencies
+* MacOS: The newest version of homebrew GCC (You need to be able to run g++-9).
+* Does not work on Windows
+* OpenMP is used as the parallelisation backend.
 
 ## Build Instructions:
 
