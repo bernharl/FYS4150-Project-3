@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
   double integral_MC = results_MC.first;
   double confidence_MC = results_MC.second;
   
-
+  //
   //Output for exercise c) and d)
   ofstream outfilecd;
   outfilecd.open("montecarlo.txt");
