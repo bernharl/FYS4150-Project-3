@@ -91,3 +91,12 @@ Temporary Items
 .history
 
 # End of https://www.gitignore.io/api/c++,linux,macos,visualstudiocode
+
+# user defined
+
+*.pdf
+*.log
+*.aux
+*.fls
+*.fdb_latexmk
+*.gz
