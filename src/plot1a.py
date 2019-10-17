@@ -11,13 +11,13 @@ fonts = {
     "ytick.labelsize": 16,
 }
 plt.rcParams.update(fonts)
-
+analytical = 5 * np.pi**2 / 16**2
 # Reading data, defining errors
 
 data = np.loadtxt("Exercise_a_b.txt", skiprows = 1)
 N = data[:, 0]
-error_gauleg = data[:, 1]
-error_gauss_laguerre = data[:, 2]
+error_gauleg = data[:, 1] / analytical
+error_gauss_laguerre = data[:, 2] / analytical
 
 fig, ax = plt.subplots()
 # The golden ratio for nice plots size, also based on width of tex document
@@ -26,10 +26,10 @@ fig, ax = plt.subplots()
 # Plotting data
 ax.semilogy(N, error_gauleg, label = "Brute force")
 ax.semilogy(N, error_gauss_laguerre, label = "Improved")
-ax.semilogy(N, np.ones_like(N) * 1e-2, label = "Three digit precision")
+ax.semilogy(N, np.ones_like(N) * 1e-2 / analytical, label = "Three digit precision")
 ax.grid()
 ax.set_xlabel(r"$N$")
-ax.set_ylabel(r"Absolute error")
+ax.set_ylabel(r"Relative error")
 fig.tight_layout()
 ax.legend(loc=1)
 # Saving high quality figure
