@@ -56,9 +56,9 @@ int main(int argc, char *argv[])
   outfilepar << " N: " << " Integral: " << " Variance: " << "CPU_time" << endl;
   for (int i=1; i<=8; i++)
   {
-    N = std::pow(10, i) * number_of_threads;
+    N = std::pow(10, i);
     t_start = omp_get_wtime();
-    std::pair<double, double> results_MC = monte_carlo_improved(N / number_of_threads, alpha, number_of_threads);
+    std::pair<double, double> results_MC = monte_carlo_improved(N, alpha, 1);
     t_end = omp_get_wtime();
     CPU_time = 1000.0 * (t_end - t_start);
     outfilepar << setw(20) << setprecision(10) << N
