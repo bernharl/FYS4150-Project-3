@@ -33,9 +33,9 @@ read ynreport
 if [ "$ynreport" == "y" ]
 then
   cd ../doc/
-  pdflatex -synctex=1 -interaction=nonstopmode CompPhysProj3.tex
-  bibtex CompPhysProj3.aux
-  pdflatex -synctex=1 -interaction=nonstopmode CompPhysProj3.tex
-  bibtex CompPhysProj3.aux
-  pdflatex -synctex=1 -interaction=nonstopmode CompPhysProj3.tex
+  pdflatex -synctex=1 -interaction=nonstopmode ComphysProj3.tex
+  bibtex Comphysproj3.aux
+  pdflatex -synctex=1 -interaction=nonstopmode ComphysProj3.tex
+  bibtex ComphysProj3.aux
+  pdflatex -synctex=1 -interaction=nonstopmode ComphysProj3.tex
 fi
