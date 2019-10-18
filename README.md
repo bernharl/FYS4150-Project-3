@@ -20,7 +20,8 @@ Third project in FYS4150 Computational Physics
 ## Structure: 
 
 * src/integration.cpp Contains all integration methods used.
-* src/main.cpp Runs the methods in src/integration.cpp. Results are saved in src/montecarlo_paro(1-3).txt, src/montecarlo.txt, src/montecarlo_improved.txt and Exercise_a_b.txt
+* src/main.cpp Runs the methods in src/integration.cpp. Results are saved in src/montecarlo.txt, src/montecarlo_improved.txt and Exercise_a_b.txt
+* src/monte_carlo_compiler_flags.cpp Source code used for generating src/montecarlo_paro(1-3).txt with different O-flags. This is done automatically by main_script.sh.
 * src/test-functions.cpp Contains all unit tests run by Catch2.
 * src/plot1a.py Generates all relevant plots for gauss-legendre and gauss-laguerre. Plots are saved as vector graphics (.pdf) in doc/Figures
 * src/plotmontecarlo.py Plots all relevant plots for monte carlo integration. Plots are saved as vector graphics (.pdf) in doc/Figures
