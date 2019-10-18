@@ -205,8 +205,8 @@ where $f = f(u_1, u_2, \theta_1, \theta_2, \phi_1, \phi_2) = \frac{\sin
 
 \subsection{Brute Force Monte Carlo Integration}\label{subsec:brute_force_monte_carlo}
 An integration method frequently used, espessially when computing
-multi-dimensional integrals as its error remains constant for any higher
-dimension, is the Monte Carlo integration. In this integration method one
+multi-dimensional integrals as its error remains independent of the
+dimensionality of the integral \citep[p. 343-344]{jensen:2015}, is the Monte Carlo integration. In this integration method one
 approximates the integral by an expectation value. Consider for instance an
 integral 
 \begin{align}
@@ -237,6 +237,7 @@ the variance defined as
 \begin{align}
 	\sigma^2 = \frac{1}{N}\sum_{i=0}^{N-1} f^2(x_i) - \left(\frac{1}{N}\sum_{i=0}^{N-1}f(x_i)\right)^2 = \langle f^2\rangle - \langle f\rangle^2.
 \end{align}
+The variance for a multi-dimensionl case is computed ina completely analogous way.
 As a Monte Carlo integration is a statistical experiment, the variance
 $\sigma^2$ is a measure of the spread from the mean of the integral
 approximation. We thus whant to minimize this quatity.
