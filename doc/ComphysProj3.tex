@@ -22,6 +22,29 @@
 \author{Bernhard Nornes Lotsberg}
 
 \begin{abstract}
+	Solving integrals is an essential part of science and mathematics. We have
+	implemented, tested and compared four different numerical methods for
+	solving integrals. The methods implemented were a brute force
+	Gauss-Legendre quadrature, an improved Gauss-Laguerre quadrature as well as
+	a brute force and an improved Monte Carlo integration method. Our method was
+	tested on an integral computing the expectation value of the potential of
+	two interacting electrons in a simplified helium atom with a known
+	analytical value. Our results indicate that for our integral, the relative error for the improved Gaussian
+	quadrature method steadily decreases as the resolution of the computational
+	grid increases. The brute force method on the other hand produces a relative
+	error fluctuating unpredictably as the resolution of the grid increases
+	making it inferior to the improved method for this integral. For the Monte
+	Carlo methods we show that adapting the probability distribution to the
+	given integral dramatically improves the variance, thereby gaining a
+	significant increase in precision. The Monte Carlo methods was also
+	calculated using parallelization indicating that the CPU time decreases
+	proportionally to the amount of CPU threads used in the calculation. When
+	taking the relative error into account our results indicate that for our
+	integral, the improved Monte Carlo method is preferred followed by the
+	Gauss-Lagurre quadrature method. \\\\
+	The source codes for this paper can be found at
+	\href{https://github.com/bernharl/FYS4150-Project-3}{https://github.com/bernharl/FYS4150-Project-3}.  
+	 
 \end{abstract}
 
 \section{Introduction} \label{sec:intro}
@@ -322,7 +345,7 @@ for comparison.
 
 \section{Results} \label{sec:results}
 The results were produced running on a MacBook Pro (macOS Mojave 10.14.6) with
-8gb RAM using a dual coreIntel Core i5-7360U $2.3$GHz CPU with four threads. The
+8gb RAM using a dual core Intel Core i5-7360U $2.3$GHz CPU with four threads. The
 program was compiled using openMP for the parallelization with the gcc compiler
 version (Homebrew GCC $9.2.0\_1$) $9.2.0$.\\\\ For the results listed below we
 found that $\lambda = 1.5$ was a sufficient approximation infinity when using
@@ -337,7 +360,9 @@ integral in spherical coordinates given by (\ref{eq:spherical_integral}) using
 the improved method, as described in section \ref{subsec:improved_gauss}. These
 results are shown in figure \ref{fig:relerrquad}. In the figure a line is drawn
 when the relative error surpasses $10^{-2}$ to illustrate when the method
-achieves three digit precision.\\
+achieves three digit precision. The CPU time for the improved gaussian
+quadrature method with grid resolution $N=30$ was measured. It turned out to
+be approximately $51000$ms\\
 \begin{figure}[h]
 	\includegraphics{{Figures/exercise_a_b}.pdf}
 	\caption{Figure showing the relative error for the brute force gaussian quadrature and the improved gaussian quadrature methods, described in section \ref{subsec:brute_force_gauss} and \ref{subsec:improved_gauss} respectively, as a function of grid resolution $N$. A line is drawn when the relative error is $10^-2$ to illustrate when the integral reaches three digit precision.}
@@ -378,6 +403,47 @@ parallelization with four threads.
 	\label{fig:CPUcarloflag}
 \end{figure}
 \section{Discussion} \label{sec:discussion}
+When comparing the relative error for the brute force and improved Monte Carlo
+methods, our results, as shown in figure \ref{fig:rellerrcarlo}, indicate that the improved method reaches a significantly
+higher precision for higher sample sizes $N$. This shows that when we draw from
+a probability distribution suited to the integral our results improve. This can
+also be seen by studying the variance for the brute force and improved methods,
+as shown in figure \ref{fig:variancecarlo}. Here we see that the Variance drops
+alot faster for the improved method and stays approximately an order of
+magnitude lower than the variance for the brute force method. When comparing the
+CPU time for improved gaussian quadrature method with grid resolution $N=30$ to
+the CPU time for the improved Monte Carlo method with sample size $N=10^8$, both
+unparallelized, one can see that the CPU time for the improved Monte Carlo method is significantly
+better. If we compare the relative error one can also see, from figures
+\ref{fig:relerrquad} and \ref{fig:rellerrcarlo} that the error for the improved
+Monte Carlo method has a lot shorter CPU time. This indicates that the Improved
+Monte Carlo method provides a better accuracy for a shorter CPU time. It is also
+worth noting that the results presented originate from a single iteration of the
+program. CPU time can be sensitive to background processes running on the
+processor. This can cause the results to vary slightly for different runs.
+A further improvement would be to take the average over multiple runs.\\\\\indent
+
+The paralellization provided a significant improvement to the CPU time for the
+brute force and improved Monte Carlo methods. From figure \ref{fig:CPUcarlo} one
+can see that the parallelization with two threads approximately halves the CPU
+time compared to doing the same calculation with one thread. From the same
+figure, one can also see that the CPU time for the brute force method has a lower
+CPU time than the improved method. This shows that allthough increasing
+precision, drawing from an exponential distribution comes with a drawback
+in form of calculations taking longer time.\\
+When studying the solution for the improved Monte Carlo method using four
+threads and different compiler flags, our results indicated that the flags had a
+low impact on the CPU time. This is shown in figure \ref{fig:CPUcarloflag}. In
+our implementation of the methods, we included an if-statement to set $f=0$ if
+$|\vec{r}_1 - \vec{r}_2| = 0$ to avoid divison by zero as described in section
+\ref{sec:method}. For the compiler flags to be able to optimize the code, it
+should be predictable. If-statements make the code unpredictable in the sense
+that there is no way to predict when the condition occurs. A further improvement
+would be to rewrite the integral given by \ref{eq:integral} on a form that does
+not contain singularities.
+
+
+
 \section{Conclusion} \label{sec:conclusion}
 \printinunitsof{in}\prntlen{\textwidth}
 \nocite{jensen:2019}
