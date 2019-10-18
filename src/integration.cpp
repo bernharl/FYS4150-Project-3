@@ -208,9 +208,9 @@ std::pair<double, double> monte_carlo(double a, double b, int N, double lambda, 
         f_2 += func_val * func_val;
     }
     double common_factor = pow(b - a, 6);
-    I = f * common_factor  / N;
-    f_2 *= pow(common_factor, 2) / (N);
-    var = (f_2 - I * I) / N;
+    I = f * common_factor  / ((double) N);
+    f_2 *= pow(common_factor, 2) / ( (double) N);
+    var = f_2 - I * I;
     std::pair<double, double> results = make_pair(I, var);
     return results;
 }
@@ -265,10 +265,10 @@ std::pair<double, double> monte_carlo_improved(int N, double alpha, int number_o
   }
 
   double common_factor = 4 * pow(PI, 4) / pow(2 * alpha, 5);
-  I = f * common_factor / N;
+  I = f * common_factor / ((double) N);
 
-  f_2 *= common_factor * common_factor / (N);
-  var = (f_2 - I * I) / N;
+  f_2 *= common_factor * common_factor / ((double) N);
+  var = f_2 - I * I;
 
   std::pair<double, double> results = make_pair(I, var);
   return results;
