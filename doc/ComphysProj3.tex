@@ -378,7 +378,64 @@ parallelization with four threads.
 	\label{fig:CPUcarloflag}
 \end{figure}
 \section{Discussion} \label{sec:discussion}
+When computing the integral (\ref{eq:integral}) in a brute force manner, as
+meansioned in the previous section, that when using a grid size of $N\sim20$ to
+$N\sim30$, an approximation of infinity of $\lambda = 1.5$ was sufficient to
+achieve a three digit precision. However, on can in Figure \ref{fig:relerrquad}
+showing the relative error of the numerical integrals as a funtion of the grid
+size for $\lambda = 1.5$, see that the relative error of the Gauss-Legendre
+quadrature varies rapidly over the grid size $N$. Thus, the brute force approach
+seems to yield an unpredictable and thus quite unsatisfactory precision.
+Therewhile, the relative error of the improved quadrature decreases for
+increasing grid size $N$. Thus the improved Gauss-Laguerre quadrature method
+provides a far more predictable decrease in the relative error, making it the
+Gaussian quadrature of choice for the problem at hand. The differences between
+these to methods are consistant with the theory, as the Gauss-Laguere quadrature
+constructs more suitable wights fitting the integrand better. Also we need to
+approximate infinity when computing (\ref{eq:integral}) in cartesian coordiantes
+using Gauss-Legendre quadrature, while the Gauss-Laguere quadrature using
+spherical coordiantes absorbes the infinity term in the weights, effectively
+circumventing this potential sorce of error of an insifficient infinity
+approximation.
+
+
 \section{Conclusion} \label{sec:conclusion}
+We have implemented four different numerical integration methods to find the
+expectation value of the potential of two interacting electrons in a simplfied
+helium atom model. After finding an approximation of infinity yielding a
+numerical result within a three digit precision, of the brute force
+Gauss-Legendre method in cartesian coordianes, the relative error was found to
+fluctuate rapidly over increasing grid size $N$. Therewhile the improved
+Gauss-Laguerre approach in spherical coordinates provided a relative error
+steadily decreasing for increasing $N$, rendering it the GQ of choice for the
+problem at hand. 
+
+We computed the integral using a brute force and an impoved Monte Carlo
+integration. Comparing the two, we found that the improved Monte Carlo method
+had an slower run time, however a variance of one order of magnitude lower than
+the brute force method. When comparing the improved GQ and Monte Carlo
+integration with the highest grid and sampel size, we found the Monte Carlo
+integration to provide a significantly higher accuracy and faster run time than
+the GQ method.
+
+When comparing the run time of the brute force and Improved Monte Carlo
+integrations for different sample sizes and different degrees of
+parallelization, we found that the improved Monte Carlo method in general was
+slower in run time than the brute force method. However, a notable speed up was
+noticed when comparing the parallelization using one and two threads.
+
+Last we tested the run time of the improved Monte Carlo method with different
+compiler flags and without parallelization, for different grid sizes. We found
+all three comiler flags to provide about the same run time, probably due to the
+\texttt{if}-statement in the integrand.
+
+In order to improve our results one could rewrite the integran in a more
+inteligent manner, so as to circumvent singularities. Also one could run the
+Monte Carlo integrals and measure the CPU time several times for each grid size
+$N$ and take the mean to get a more accurate results.
+
+
+
 \printinunitsof{in}\prntlen{\textwidth}
 \nocite{jensen:2019}
 \bibliographystyle{aasjournal}
