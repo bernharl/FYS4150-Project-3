@@ -26,22 +26,20 @@
 	We have implemented, tested and compared four different numerical methods
 	for solving integrals. The methods implemented were a brute force
 	Gauss-Legendre quadrature, an improved Gauss-Laguerre quadrature as well as
-	a brute force and an improved Monte Carlo integration method. These methods were
-	tested on an integral computing the expectation value for the potential of
-	two interacting electrons in a simplified helium atom with a known
-	analytical solution. Our results indicate that for the integral, the relative
-	error for the improved Gaussian quadrature method steadily decreases as the
-	resolution of the computational grid increases. The brute force method on
-	the other hand produces a relative error fluctuating unpredictably as the
-	resolution of the grid increases making it inferior to the improved method
-	when solving this integral. For the Monte Carlo methods we show that adapting the
-	probability distribution to the given integral dramatically improves the
-	variance, thereby gaining a significant increase in precision. The Monte
-	Carlo methods were also calculated using parallelization indicating that the
-	CPU time decreases proportionally to the amount of CPU threads used in the
-	calculation. When taking the relative error into account our results
-	indicate that for the integral, the improved Monte Carlo method is the
-	preferred method of choice followed by the Gauss-Lagurre quadrature method. \\\\
+	a brute force and an improved Monte Carlo integration method. These methods
+	were tested on an integral computing the expectation value for the potential
+	of two interacting electrons in a simplified helium atom with a known
+	analytical solution. Our results indicate that for the integral, the
+	relative error for the improved Gaussian quadrature method steadily
+	decreases as the resolution of the computational grid increases. The brute
+	force method on the other hand produces a relative error fluctuating
+	unpredictably as the resolution of the grid increases making it inferior to
+	the improved method when solving this integral. The Monte Carlo methods were
+	also calculated using parallelization indicating that the CPU time decreases
+	proportionally to the amount of CPU threads used in the calculation. When
+	taking the relative error into account our results indicate that for the
+	integral, the improved Monte Carlo method is the preferred method of choice
+	followed by the Gauss-Lagurre quadrature method. \\\\
 	The source codes for this paper can be found at
 	\href{https://github.com/bernharl/FYS4150-Project-3}{https://github.com/bernharl/FYS4150-Project-3}.  
 	 
@@ -315,7 +313,8 @@ The final integral looks as follows
 	(\theta_1^i)\sin(\theta_2^i)(u_1^i)^2(u_2^i)^2}{\sqrt{(u_1^i)^2 + (u_2^i)^2 - 2u_1^iu_2^icos(\beta_i)}},
 \end{align}
 where the index $i$ simply represents that the corresponding samples are drawn
-from their corresponding PDFs.
+from their corresponding PDFs. The factor $\frac{\pi^4}{8\alpha^5}$ is a Jacobi
+determinant from the change of variables.
 \section{Method} \label{sec:method}
 When approximating the integrals, one may encounter singularities in the
 integrand when $|\vec{r}_1 - \vec{r}_2|$ becomes too small, which is due to the
@@ -345,17 +344,17 @@ different degrees of parallelization using OpenMP and different compiler flags,
 for comparison. 
 
 \section{Results} \label{sec:results}
-The results were produced running on a MacBook Pro (macOS Mojave 10.14.6) with
+The results were produced running on a MacBook Pro (macOS Catalina 10.15) with
 8GB RAM using a dual core Intel Core i5-7360U $2.3$GHz CPU with four threads.
 The program was compiled using OpenMP for the parallelization with the Apple Clang 
 compiler version 11.0.0 (clang-1100.0.33.8).\\\\ 
 For the results listed below we found that $\lambda = 1.5$ was a sufficient
 approximation for infinity when using grid sizes $N\sim20$ to $N\sim 30$ when
 using brute force Gaussian quadrature as described in section
-\ref{subsec:brute_force_gauss}. This choice for $\lambda$ remained the same when
+\ref{subsec:brute_force_gauss}. This choice for $\lambda$ in addition to $\lambda=3$ was also tested when
 calculating the brute force Monte Carlo method as described in section
 \ref{subsec:brute_force_monte_carlo}. When calculating the integral, the
-relative error was calculated for the integral given by (\ref{eq:integral}) using
+relative error was computed for the integral given by (\ref{eq:integral}) using
 the brute force method, as describred in section
 \ref{subsec:brute_force_gauss}. The relative error was also calculated for the
 integral in spherical coordinates given by (\ref{eq:spherical_integral}) using
@@ -363,7 +362,7 @@ the improved method, as described in section \ref{subsec:improved_gauss}. These
 results are shown in Figure \ref{fig:relerrquad}. In the figure a line is drawn
 to illustrate when the method achieves three digit precision. The CPU time for
 the improved Gaussian quadrature method with grid resolution $N=30$ was
-measured to be approximately $51000$ms\\
+measured to be approximately $45000$ms depending on background processes.\\
 
 \begin{figure}[h]
 	\includegraphics{{Figures/exercise_a_b}.pdf}
@@ -378,13 +377,13 @@ calculations using both Monte Carlo methods, the variance was also plotted. This
 is result is illustrated in Figure \ref{fig:variancecarlo}. 
 \begin{figure}[h]
 	\includegraphics{{Figures/error_monte_carlo}.pdf}
-	\caption{Figure showing the relative error for the brute force and the improved Monte Carlo methods, described in section \ref{subsec:brute_force_monte_carlo} and \ref{subsec:improved_monte_carlo} respectively, as a function of the sample size $N$.}
+	\caption{Figure showing the relative error for the brute force ($\lambda=1.5$ and $\lambda=3$) and the improved Monte Carlo methods, described in section \ref{subsec:brute_force_monte_carlo} and \ref{subsec:improved_monte_carlo} respectively, as a function of the sample size $N$.}
 	\label{fig:rellerrcarlo}
 \end{figure}
 
 \begin{figure}[h]
 	\includegraphics{{Figures/variance_monte_carlo}.pdf}
-	\caption{Figure showing the variance for the brute force and the improved Monte Carlo methods, as described in section \ref{subsec:brute_force_monte_carlo} and \ref{subsec:improved_monte_carlo} respectively, as a function of the sample size $N$.}
+	\caption{Figure showing the variance for the brute force ($\lambda=1.5$ and $\lambda=3$) and the improved Monte Carlo methods, as described in section \ref{subsec:brute_force_monte_carlo} and \ref{subsec:improved_monte_carlo} respectively, as a function of the sample size $N$.}
 	\label{fig:variancecarlo}
 \end{figure}
 The CPU time for both the brute force and the improved Monte Carlo methods were
@@ -394,7 +393,7 @@ is shown in Figure \ref{fig:CPUcarlo}. The three different compiler flags -O1,
 shown in Figure \ref{fig:CPUcarloflag}. This result was produced using no parallelization.
 \begin{figure}[h]
 	\includegraphics{{Figures/cpu_time_monte_carlo}.pdf}
-	\caption{Figure showing the CPU time for the brute force and the improved Monte Carlo methods, described in section \ref{subsec:brute_force_monte_carlo} and \ref{subsec:improved_monte_carlo} respectively, as a function of the sample size $N$. For both methods the CPU time was compared both unparallelized and parallelized with two threads.}
+	\caption{Figure showing the CPU time for the brute force and the improved Monte Carlo methods, described in section \ref{subsec:brute_force_monte_carlo} and \ref{subsec:improved_monte_carlo} respectively, as a function of the sample size $N$. For both methods the CPU time was compared both unparallelized and parallelized with two threads. Here $\lambda=3$ was used for the brute force method.}
 	\label{fig:CPUcarlo}
 \end{figure}
 
@@ -426,13 +425,24 @@ potential source of error of an insufficient infinity approximation.\\\\\indent
 
 When comparing the relative error for the brute force and improved Monte Carlo
 methods, our results, as shown in Figure \ref{fig:rellerrcarlo}, indicate that
-the improved method reaches a significantly higher precision for higher sample
-sizes $N$. This shows that when we draw from a probability distribution suited
-to the integrand our results improve. This can also be seen by studying the
-variance for the brute force and improved methods, as shown in Figure
-\ref{fig:variancecarlo}. Here we see that the variance drops a lot faster for
-the improved method and stays approximately an order of magnitude lower than the
-variance for the brute force method.\\\indent 
+for both values of $\lambda$ the improved method reaches a significantly higher
+precision for higher sample sizes $N$. This shows that when we draw from a
+probability distribution suited to the integrand our results improve. When
+comparing the variance, as shown in Figure \ref{fig:variancecarlo}, for the
+brute force method with the different values for $\lambda$ and the improved
+method, one can see that the variance of the improved method begins to stabilize
+when the sample size reaches approximately $N\sim10^4$. The brute force methods
+with different values for $\lambda$ begins to stabilize for a much higher sample
+size $N\sim10^6$. One can also see that the variance is sensitive to different
+choices of $\lambda$. Therefore it seems as if the improved method behaves more
+stably and predictably as there is one less parameter to tune for the integral
+at hand. Note that the variance for the improved method stabilizes at a higher
+value than for the brute force methods. One would expect the variance for both
+methods to stabilized at the same order of magnitude. In our results this is not
+the case as the improved method stabilizes at a higher order of magnitude. We
+were unable to explain this result as the relative error seems to behave
+reasonably. However the behaviour of the variance for both methods is what one
+would expect. This discrepancy suggests further research is needed.\\\indent
 When comparing the CPU time for the improved Gaussian quadrature method with
 grid resolution $N=30$ to the CPU time for the improved Monte Carlo method with
 sample size $N=10^8$, both unparallelized, one can see that the CPU time for the
@@ -445,7 +455,7 @@ the results presented originate from a single run of the program. CPU time can
 be sensitive to background processes running on the processor. This can cause
 the results to vary slightly for different runs. A further improvement would be
 to take the average over multiple runs. Another source for inaccuracy is the
-approximation of infinity as $\lambda = 1.5$\\\\\indent
+approximation of infinity as $\lambda = 1.5$\\\indent
 
 The parallelization provided a significant improvement to the CPU time for the
 brute force and improved Monte Carlo methods. From Figure \ref{fig:CPUcarlo} one
@@ -459,14 +469,18 @@ present in the mapping from the uniform distribution to the exponential
 distribution, shown in section \ref{subsec:improved_monte_carlo}.\\
 
 When studying the solution for the improved Monte Carlo method using no
-parallelization and different compiler flags, our results indicated that the
-flags had a low impact on the CPU time. This is shown in Figure
-\ref{fig:CPUcarloflag}. In our implementation of the methods, we included an
+parallelization and different compiler flags, our results indicate that the
+compiler flags had an impact on the CPU time. This is shown in Figure
+\ref{fig:CPUcarloflag}. The difference between the O1 and
+O2 flags is significant and provides a speed increase by approximately a factor 2. The
+difference between O2 and O3 however is minimal. In our implementation of the methods, we included an
 if-statement to set $f=0$ if $|\vec{r}_1 - \vec{r}_2| = 0$ to avoid divison by
 zero as described in section \ref{sec:method}. For the compiler flags to be able
 to optimize the code, the code should be predictable. If-statements make the code
 unpredictable in the sense that there is no way to predict when the condition
-occurs. This makes it hard for the compiler to vectorize the loops. A further improvement would be to rewrite the integral given by
+occurs. This makes it hard for the compiler to vectorize the loops. This may
+also suggest that the difference between O2 and O3 is not significant for this
+purpose. A further improvement could be to rewrite the integral given by
 \ref{eq:integral} on a form that does not contain singularities both to improve
 CPU time when using compiler flags as well as excluding potential errors from
 setting $f=0$.
@@ -482,11 +496,13 @@ grid size $N$. Therewhile the improved Gauss-Laguerre approach in spherical
 coordinates provided a relative error steadily decreasing for increasing $N$,
 rendering it the GQ of choice for the problem at hand. When Comparing the brute
 force and improved Monte Carlo methods, we found that the improved Monte Carlo
-method had a longer CPU time, however a the variance remained approximately an
-order of magnitude lower than the brute force method throghout the calculations.
-When comparing the improved GQ and Monte Carlo integration with the highest grid
-and sample size tested, we found the Monte Carlo integration to provide the best
-accuracy as well as having a significantly shorter CPU time.
+method had a longer CPU time, however the variance stabilizes for lower values
+of sample size $N$. The variance for the improved and brute force methods
+stabilized at different orders of magnitude. This discrepancy should be looked
+into in more detail. When comparing the improved GQ and Monte Carlo integration
+with the highest grid and sample size tested, we found the Monte Carlo
+integration to provide the best accuracy as well as having a significantly
+shorter CPU time.
 
 When comparing the run time of the brute force and improved Monte Carlo
 integrations for different sample sizes and different degrees of
@@ -495,12 +511,14 @@ longer CPU time than the brute force method. However, a notable speed up was
 noticed when the method was parallelized using one and two threads.
 
 Last we tested the CPU time of the improved Monte Carlo method with different
-compiler flags without parallelization, for different grid sizes. We found
-all three comiler flags to provide about the same CPU time, probably due to the
-if-statement in the integrand preventing efficient vectorization.
+compiler flags without parallelization, for different grid sizes. We found a
+significant speed increase by a factor 2 between the O1 and O2 flags. However
+for our problem the O2 and O3 flags proved almost identical. This could be due to the
+if-statement in the integrand preventing efficient vectorization or the O3 flag
+could prove excessive for this problem.
 
 In order to improve our results one could rewrite the integrand in a more
-convecnients manner, so as to circumvent singularities. Also one could run the
+convenient manner, so as to circumvent singularities. Also one could run the
 Monte Carlo integrals and measure the CPU time several times for each sample size
 $N$ and take the mean to get a more accurate results.
 
