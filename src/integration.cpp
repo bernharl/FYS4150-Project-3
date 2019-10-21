@@ -161,7 +161,7 @@ double gauss_quad_improved(int N, double alpha,
     return I / (32 * pow(alpha, 5));
 }
 
-std::pair<double, double> monte_carlo(double a, double b, int N, double lambda, double alpha, int number_of_threads)
+std::pair<double, double> monte_carlo(double a, double b, int N, double alpha, int number_of_threads)
   /*
   Calculates the integral in cartesian coordinates
   using monte-carlo integration.
@@ -171,7 +171,7 @@ std::pair<double, double> monte_carlo(double a, double b, int N, double lambda, 
   b: double
     Upper limit of the integral
   N: int
-    number of grid points between a and b
+    number of samples
   alpha: double
     Constant in the exponential term of the integrand.
   number_of_threads: int
@@ -180,11 +180,11 @@ std::pair<double, double> monte_carlo(double a, double b, int N, double lambda, 
   */
 {
     double I;
-    double var;
+    double var = 0;
     double func_val;
     double f = 0;
-    double f_2 = 0;
-    uniform_real_distribution<double> uniform(-lambda, lambda);
+    //double f_2 = 0;
+    uniform_real_distribution<double> uniform(a, b);
     mt19937 generator;
     double x1;
     double y1;
@@ -192,8 +192,10 @@ std::pair<double, double> monte_carlo(double a, double b, int N, double lambda, 
     double x2;
     double y2;
     double z2;
-    #pragma omp parallel reduction (+:f, f_2) num_threads(number_of_threads) private(x1, x2, y1, y2, z1, z2, func_val, generator)
-    generator.seed(omp_get_wtime() + omp_get_thread_num());
+    double *f_2 = new double[N];
+
+    #pragma omp parallel reduction (+:f) num_threads(number_of_threads) private(x1, x2, y1, y2, z1, z2, func_val, generator)
+    generator.seed(omp_get_wtime() + omp_get_thread_num() + N);
     #pragma omp for
     for (int i = 0; i < N; i++)
     {
@@ -205,12 +207,20 @@ std::pair<double, double> monte_carlo(double a, double b, int N, double lambda, 
         z2 = uniform(generator);
         func_val = int_func_cart(alpha, x1, y1, z1, x2, y2, z2);
         f += func_val;
-        f_2 += func_val * func_val;
+        f_2[i] = func_val;
+    }
+    I = f  / ((double) (N * number_of_threads));
+    #pragma omp parallel reduction (+:var) num_threads(number_of_threads) private(I)
+    #pragma omp for
+    for (int i = 0; i < N; i++)
+    {
+    var += (f_2[i] - I) * (f_2[i] - I);
     }
     double common_factor = pow(b - a, 6);
-    I = f * common_factor  / ((double) N);
-    f_2 *= pow(common_factor, 2) / ( (double) N);
-    var = f_2 - I * I;
+    var *= common_factor / ((double) (N * number_of_threads));
+    I *= common_factor;
+  delete[] f_2; 
+
     std::pair<double, double> results = make_pair(I, var);
     return results;
 }
@@ -222,7 +232,7 @@ std::pair<double, double> monte_carlo_improved(int N, double alpha, int number_o
   radial axis.
   ------------
   N: int
-    number of grid points between a and b
+    number of samples
   alpha: double
     Constant in the exponential term of the integrand.
   number_of_threads: int
@@ -232,9 +242,9 @@ std::pair<double, double> monte_carlo_improved(int N, double alpha, int number_o
 {
   double I;
   double func_val;
-  double var;
+  double var = 0;
   double f = 0;
-  double f_2 = 0;
+  //double f_2 = 0;
 
   exponential_distribution<double> exponential(1);
   uniform_real_distribution<double> uniform_theta(0, PI);
@@ -248,8 +258,9 @@ std::pair<double, double> monte_carlo_improved(int N, double alpha, int number_o
   double theta2;
   double phi1;
   double phi2;
-  #pragma omp parallel reduction (+:f, f_2) num_threads(number_of_threads) private(u1, u2, theta1, theta2, phi1, phi2, func_val, generator)
-  generator.seed(omp_get_wtime() + omp_get_thread_num());
+  double *f_2 = new double [N];
+  #pragma omp parallel reduction (+:f) num_threads(number_of_threads) private(u1, u2, theta1, theta2, phi1, phi2, func_val, generator)
+  generator.seed(omp_get_wtime() + omp_get_thread_num() + N);
   #pragma omp for
   for (int i = 0; i < N; i++)
   {
@@ -261,15 +272,21 @@ std::pair<double, double> monte_carlo_improved(int N, double alpha, int number_o
       phi2 = uniform_phi(generator);
       func_val = int_func_spherical(u1, u2, theta1, theta2, phi1, phi2)  * u1 * u1 * u2 * u2 * sin(theta1) * sin(theta2);
       f += func_val;
-      f_2 += func_val * func_val;
+      f_2[i] = func_val;
+  }
+
+  I = f / ((double) N * number_of_threads);
+  #pragma omp parallel reduction (+:var) num_threads(number_of_threads) private(I)
+  #pragma omp for
+  for (int i = 0; i < N; i++)
+  { 
+    var += (f_2[i] - I) * (f_2[i] - I);
   }
 
   double common_factor = 4 * pow(PI, 4) / pow(2 * alpha, 5);
-  I = f * common_factor / ((double) N);
-
-  f_2 *= common_factor * common_factor / ((double) N);
-  var = f_2 - I * I;
-
+  var *= common_factor / ((double) N * number_of_threads);
+  I *= common_factor;
+  delete[] f_2; 
   std::pair<double, double> results = make_pair(I, var);
   return results;
 }

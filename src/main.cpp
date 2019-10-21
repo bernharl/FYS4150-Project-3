@@ -13,28 +13,8 @@ using std::exp;
 
 
 
-int main(int argc, char *argv[])
+int main()
 {
-  int number_of_threads;
-
-  if (argc != 2) {
-    throw std::invalid_argument("Please provide exactly one command line argument deciding the number of threads, use -1 to use all available");
-  }
-  else {
-    number_of_threads = atoi(argv[1]);
-  }
-
-  if (number_of_threads == -1) {
-      number_of_threads = omp_get_max_threads();
-  }
-
-  else if (number_of_threads > omp_get_max_threads()) {
-      throw std::invalid_argument("Number of threads chosen is higher than the max available!");
-  }
-
-  else if (number_of_threads <= 0) {
-    throw std::invalid_argument("Please choose a positive, non-zero amount of threads. To use all threads, choose -1");
-  }
 
   double analy =  5 * PI * PI / (16 * 16); // Analytical solution to the integral.
   double alpha = 2; // Constant factor in the exponential function of the integrand.
@@ -55,9 +35,9 @@ int main(int argc, char *argv[])
   double t_end;
   double CPU_time;
   double CPU_time_par;
-
+  /*
   // Exercise a) and b) output
-  cout << "Initializing gaussian quadrature bruteforce and improved" << endl;
+  cout << "Initializing gaussian quadrature brute force and improved" << endl;
 
   ofstream outfileab;
   outfileab.open("Exercise_a_b.txt");
@@ -91,18 +71,19 @@ int main(int argc, char *argv[])
 
 
   
-  //
+  */
   //Output for exercise c) and d)
-
-  cout << "Initializing regular Monte Carlo method" << endl;
-  ofstream outfilecd;
-  outfilecd.open("montecarlo.txt");
-  outfilecd << " N: " << " Integral: " << " Variance: " << " CPU_time " << " CPU_time_par " << endl;
+  
+  lambda = 1.5;
+  cout << "Computing regular Monte Carlo method with lambda = 2" << endl;
+  ofstream outfilecd_2;
+  outfilecd_2.open("montecarlo_lambda_2.txt");
+  outfilecd_2 << " N: " << " Integral: " << " Variance: " << " CPU_time " << " CPU_time_par " << endl;
   for (int i=1; i<=8; i++)
   {
     N = std::pow(10, i);
     t_start = omp_get_wtime();
-    results_MC_par = monte_carlo(a, b, N / 2.0, lambda, alpha, 2);
+    results_MC_par = monte_carlo(-lambda, lambda, N / 2.0 , alpha, 2);
     t_end = omp_get_wtime();
     CPU_time_par = 1000.0 * (t_end - t_start);
     
@@ -112,7 +93,7 @@ int main(int argc, char *argv[])
     }
 
     t_start = omp_get_wtime();
-    results_MC = monte_carlo(a, b, N, lambda, alpha, 1);
+    results_MC = monte_carlo(-lambda, lambda, N, alpha, 1);
     t_end = omp_get_wtime();
     CPU_time = 1000.0 * (t_end - t_start);
 
@@ -122,14 +103,53 @@ int main(int argc, char *argv[])
     }
 
 
-    outfilecd << setw(20) << setprecision(10) << N 
+    outfilecd_2 << setw(20) << setprecision(10) << N 
             << setw(20) << setprecision(10) << results_MC.first
             << setw(20) << setprecision(10) << results_MC.second 
             << setw(20) << setprecision(10) << CPU_time
             << setw(20) << setprecision(10) << CPU_time_par
             << endl;
   }
-  outfilecd.close();
+  outfilecd_2.close();
+
+  
+  lambda = 3;
+  cout << "Computing regular Monte Carlo method lambda = 3" << endl;
+  ofstream outfilecd_3;
+  outfilecd_3.open("montecarlo_lambda_3.txt");
+  outfilecd_3 << " N: " << " Integral: " << " Variance: " << " CPU_time " << " CPU_time_par " << endl;
+  for (int i=1; i<=8; i++)
+  {
+    N = std::pow(10, i);
+    t_start = omp_get_wtime();
+    results_MC_par = monte_carlo(-lambda, lambda, N / 2.0 , alpha, 2);
+    t_end = omp_get_wtime();
+    CPU_time_par = 1000.0 * (t_end - t_start);
+    
+    if (i == 8) 
+    {
+      cout << "CPU time Monte Carlo two threads with N = 1e8: " << CPU_time_par << " ms" << endl;
+    }
+
+    t_start = omp_get_wtime();
+    results_MC = monte_carlo(-lambda, lambda, N, alpha, 1);
+    t_end = omp_get_wtime();
+    CPU_time = 1000.0 * (t_end - t_start);
+
+    if (i == 8) 
+    {
+      cout << "CPU time Monte Carlo one thread with N = 1e8: " << CPU_time << " ms" << endl;
+    }
+
+
+    outfilecd_3 << setw(20) << setprecision(10) << N 
+            << setw(20) << setprecision(10) << results_MC.first
+            << setw(20) << setprecision(10) << results_MC.second 
+            << setw(20) << setprecision(10) << CPU_time
+            << setw(20) << setprecision(10) << CPU_time_par
+            << endl;
+  }
+  outfilecd_3.close();
 
   
   ofstream outfileimp;
@@ -138,7 +158,7 @@ int main(int argc, char *argv[])
 
 
   // Output for exercise c) and d)
-  cout << "Initializing improved Monte Carlo method" << endl;
+  cout << "Computing improved Monte Carlo method" << endl;
   for (int i=1; i<=8; i++)
   {
     N = std::pow(10, i);
@@ -170,33 +190,5 @@ int main(int argc, char *argv[])
   }
   outfileimp.close();
   
-  
-  /*
-  //Output for exercise e)
-  //This part of the code has to be run separately for three different
-  //compiler flags to produce three separate text files with the data
-  //needed for exercise e).
-
-  ofstream outfilepar;
-  outfilepar.open("montecarlo_paro3.txt");
-  outfilepar << " N: " << " Integral: " << " Variance: " << "CPU_time" << endl;
-  for (int i=1; i<=8; i++)
-  {
-    N = std::pow(10, i);
-    t_start = omp_get_wtime();
-    cout << "hei" << endl;
-    std::pair<double, double> results_MC = monte_carlo_improved(N, alpha, number_of_threads);
-    t_end = omp_get_wtime();
-    CPU_time = 1000.0 * (t_end - t_start);
-    outfilepar << setw(20) << setprecision(10) << N 
-               << setw(20) << setprecision(10) << results_MC.first
-               << setw(20) << setprecision(10) << results_MC.second 
-               << setw(20) << setprecision(10) << CPU_time
-               << endl;
-  }
-  outfilepar.close();
-  */
-
-
   return 0;
 }
