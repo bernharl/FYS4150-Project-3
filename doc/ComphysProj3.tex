@@ -257,10 +257,11 @@ The integral can thus be approximated by
 In order to get an estimate for the accuracy of the integration we can calculate
 the variance defined as 
 \begin{align}
-	\sigma^2 = \frac{1}{N}\sum_{i=0}^{N-1} f^2(x_i) - \left(\frac{1}{N}\sum_{i=0}^{N-1}f(x_i)\right)^2 = \langle f^2\rangle - \langle f\rangle^2.
+	\sigma_f^2 = (b-a) \left(\frac{1}{N}\sum_{i=0}^{N-1} f^2(x_i) - \left(\frac{1}{N}\sum_{i=0}^{N-1}f(x_i)\right)^2\right) = (b-a)\left(\langle f^2\rangle - \langle f\rangle^2\right).
 \end{align}
-The variance for a multi-dimensionl case is computed ina completely analogous way.
-As a Monte Carlo integration is a statistical experiment, the variance
+The standard deviation is defined as $\sigma_N = \sigma_f/\sqrt{N}$ according to the central
+limit theorem for $N$ samples \citep[p. 343]{jensen:2015}. The variance for a multi-dimensionl case is computed in a completely
+analogous way. As a Monte Carlo integration is a statistical experiment, the variance
 $\sigma^2$ is a measure of the spread from the mean of the integral
 approximation. We thus want to minimize this quatity.
 
@@ -346,8 +347,8 @@ for comparison.
 \section{Results} \label{sec:results}
 The results were produced running on a MacBook Pro (macOS Mojave 10.14.6) with
 8GB RAM using a dual core Intel Core i5-7360U $2.3$GHz CPU with four threads.
-The program was compiled using OpenMP for the parallelization with the gcc
-compiler version (Homebrew GCC $9.2.0\_1$) $9.2.0$.\\\\ 
+The program was compiled using OpenMP for the parallelization with the Apple Clang 
+compiler version 11.0.0 (clang-1100.0.33.8).\\\\ 
 For the results listed below we found that $\lambda = 1.5$ was a sufficient
 approximation for infinity when using grid sizes $N\sim20$ to $N\sim 30$ when
 using brute force Gaussian quadrature as described in section
