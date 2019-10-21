@@ -3,10 +3,12 @@ UNAME := $(shell uname)
 ifeq ($(UNAME), Linux) # Linux
 $(info "Compiling for Linux")
 CPPflags= g++ -std=c++11 -Wall -O3
+LIB = -fopenmp
 endif
 ifeq ($(UNAME), Darwin) # Mac
-$(info "Compiling for Mac using g++-9 for openMP support")
-CPPflags= /usr/local/bin/g++-9 -std=c++11 -L/usr/local/Cellar/armadillo/9.800.1/lib/ -Wall -O3
+$(info "Compiling for Mac for openMP support")
+CPPflags= g++ -std=c++11 -Wall -O3
+LIB = -lomp
 endif
 
 
@@ -14,7 +16,7 @@ endif
 
 TESTPROG= testcode.out
 MAINPROG= mainprog.out
-LIB = -fopenmp
+
 all:	${TESTPROG} ${MAINPROG}
 
 ${TESTPROG} :	   		tests-main.o  test-functions.o

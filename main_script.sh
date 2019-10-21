@@ -27,13 +27,13 @@ then
   if [ "$os" == "Darwin" ]
   then
     echo "Compiling for MacOS"
-    g++-9 monte_carlo_compiler_flags.cpp -std=c++11 -fopenmp -O1 -o monte_carlo_compiler_flags_O1.out
+    g++ monte_carlo_compiler_flags.cpp -std=c++11 -lomp -O1 -o monte_carlo_compiler_flags_O1.out
     ./monte_carlo_compiler_flags_O1.out 4 1
 
-    g++-9 monte_carlo_compiler_flags.cpp -std=c++11 -fopenmp -O2 -o monte_carlo_compiler_flags_O2.out
+    g++ monte_carlo_compiler_flags.cpp -std=c++11 -lomp -O2 -o monte_carlo_compiler_flags_O2.out
     ./monte_carlo_compiler_flags_O2.out 4 2
 
-    g++-9 monte_carlo_compiler_flags.cpp -std=c++11 -fopenmp -O3 -o monte_carlo_compiler_flags_O3.out
+    g++ monte_carlo_compiler_flags.cpp -std=c++11 -lomp -O3 -o monte_carlo_compiler_flags_O3.out
     ./monte_carlo_compiler_flags_O3.out 4 3
   elif [ "$os" == "Linux"]
   then
